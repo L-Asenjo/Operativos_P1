@@ -176,17 +176,32 @@ public class Lista {
      * @param value Objeto a encontrar.
      * @return Posición correspondiente al elemento en la lista.
      */
-    public int indexOf(Object value) {
-        String aux = ((Nodo) this.value.getValue()).getInfo().getName();
+    public int indexOfDevice(Object value) {
+        int aux = ((Nodo) this.value.getValue()).getInfoDevice().getId();
 
-        if (this.value != null && aux.equals(((Nodo) value).getInfo().getName())) {
+        if (this.value != null && aux == (((Nodo) value).getInfoDevice().getId())) {
             return this.value.getIndex();
         } else {
             if (this.next != null) {
-                return this.next.indexOf(value);
+                return this.next.indexOfDevice(value);
             } else {
                 return -1;
             }
         }
     }
+    
+    public int indexOfPCB(Object value) {
+        int aux = ((Nodo) this.value.getValue()).getInfoPCB().getId();
+
+        if (this.value != null && aux ==(((Nodo) value).getInfoPCB().getId())) {
+            return this.value.getIndex();
+        } else {
+            if (this.next != null) {
+                return this.next.indexOfPCB(value);
+            } else {
+                return -1;
+            }
+        }
+    }
+    
 }

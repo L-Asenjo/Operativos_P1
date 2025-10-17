@@ -47,10 +47,19 @@ public class PCB {
         this.mar = mar;
     }
     
+    
     public void update(String status, int pc, int mar) {
         setStatus(status);
         setPc(pc);
         setMar(mar);
     }
+
+    /**
+     * @return the id
+     */
+    public int getId() {
+        return id;
+    }
+    
     
 }

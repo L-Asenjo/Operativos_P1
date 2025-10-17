@@ -16,90 +16,72 @@ package EDD;
 public class Nodo {
 
     private Lista children;
-    private Object info;
+    private PCB infoPCB;
+    private Device infoDevice;
     private Nodo parent;
-    private int height;
+    
+    public Nodo(PCB infoPCB) {
+        this.infoPCB = infoPCB;
+    }
 
-    /**
-     * *
-     * Constructor de la clase Nodo
-     *
-     * @param info Objeto de tipo parada. Información que contiene el nodo.
-     */
-    public Nodo(Object info) {
-        this.info = info;
-        this.children = new Lista();
+    public Nodo(Device infoDevice) {
+        this.infoDevice = infoDevice;
     }
 
     /**
-     * Función que devuelve la lista de hijos.
-     * 
-     * @return Lista de hijos.
+     * @return the children
      */
     public Lista getChildren() {
         return children;
     }
 
     /**
-     * Procedimiento para cambiar la lista de hijos.
-     * 
-     * @param children Lista nueva de hijos.
+     * @param children the children to set
      */
     public void setChildren(Lista children) {
         this.children = children;
     }
 
     /**
-     * Función que devuelve a objeto parada.
-     * 
-     * @return Objeto parada.
+     * @return the infoPCB
      */
-    public Object getInfo() {
-        return info;
+    public PCB getInfoPCB() {
+        return infoPCB;
     }
 
     /**
-     * Procedimiento para cambiar el contenido del atributo parada.
-     * 
-     * @param info Objeto parada.
+     * @param infoPCB the infoPCB to set
      */
-    public void setInfo(Object info) {
-        this.info = info;
+    public void setInfoPCB(PCB infoPCB) {
+        this.infoPCB = infoPCB;
     }
 
     /**
-     * Función que devuelve el Nodo padre.
-     * 
-     * @return Nodo padre.
+     * @return the infoDevice
+     */
+    public Device getInfoDevice() {
+        return infoDevice;
+    }
+
+    /**
+     * @param infoDevice the infoDevice to set
+     */
+    public void setInfoDevice(Device infoDevice) {
+        this.infoDevice = infoDevice;
+    }
+
+    /**
+     * @return the parent
      */
     public Nodo getParent() {
         return parent;
     }
 
     /**
-     * Procedimiento para cambiar el Nodo padre.
-     * 
-     * @param parent Nodo padre.
+     * @param parent the parent to set
      */
     public void setParent(Nodo parent) {
         this.parent = parent;
     }
-
-    /**
-     * Función que devuelve el valor del nivel del nodo.
-     * 
-     * @return Nivel del nodo.
-     */
-    public int getHeight() {
-        return height;
-    }
-
-    /**
-     * Procedimiento para cambiar el nivel del nodo.
-     * 
-     * @param height Nuevo nivel del nodo.
-     */
-    public void setHeight(int height) {
-        this.height = height;
-    }
+    
 }
