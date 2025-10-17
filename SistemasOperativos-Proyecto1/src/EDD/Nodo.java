@@ -16,7 +16,7 @@ package EDD;
 public class Nodo {
 
     private Lista children;
-    private Parada info;
+    private Object info;
     private Nodo parent;
     private int height;
 
@@ -26,7 +26,7 @@ public class Nodo {
      *
      * @param info Objeto de tipo parada. Información que contiene el nodo.
      */
-    public Nodo(Parada info) {
+    public Nodo(Object info) {
         this.info = info;
         this.children = new Lista();
     }
@@ -54,7 +54,7 @@ public class Nodo {
      * 
      * @return Objeto parada.
      */
-    public Parada getInfo() {
+    public Proceso getInfo() {
         return info;
     }
 
@@ -63,7 +63,7 @@ public class Nodo {
      * 
      * @param info Objeto parada.
      */
-    public void setInfo(Parada info) {
+    public void setInfo(Object info) {
         this.info = info;
     }
 
