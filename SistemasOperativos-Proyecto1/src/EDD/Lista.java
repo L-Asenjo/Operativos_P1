@@ -146,7 +146,7 @@ public class Lista {
         
         for (int i = 0; i < count(); i++) {
             if ((Nodo)get(i)!= null) {
-                txt = txt + "\n"+ ((Nodo)get(i)).getInfo().getName();
+                //txt = txt + "\n"+ ((Nodo)get(i)).getInfo().getName();
             }
         }
         return txt;
