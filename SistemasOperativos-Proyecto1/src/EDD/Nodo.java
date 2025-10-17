@@ -54,7 +54,7 @@ public class Nodo {
      * 
      * @return Objeto parada.
      */
-    public Proceso getInfo() {
+    public Object getInfo() {
         return info;
     }
 

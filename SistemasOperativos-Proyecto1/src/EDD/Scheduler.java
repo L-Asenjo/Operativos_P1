@@ -22,6 +22,9 @@ public class Scheduler {
         
     }
     
+    /*
+    
+    Por definir, lo comenté para que no salga el símbolo de error
     public SPN(){
     
     }
@@ -29,6 +32,6 @@ public class Scheduler {
     public PriorityPlanification(){
     
     }
-    
+    */
     
 }
