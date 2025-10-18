@@ -8,7 +8,7 @@ package EDD;
  *
  * @author miche_ysmoa6e
  */
-public class Scheduler {
+public class Scheduler extends Thread {
     
     Lista processList = new Lista(); //Lista en la cual se guardan los procesos a ejecutar
     // Creo que deberíamos hacer que se reinicien cuando se cambia de planificación

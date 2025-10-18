@@ -18,6 +18,7 @@ public class Nodo {
     private Lista children;
     private PCB infoPCB;
     private Device infoDevice;
+    private Proceso infoProceso;
     private Nodo parent;
     
     public Nodo(PCB infoPCB) {
@@ -28,6 +29,10 @@ public class Nodo {
         this.infoDevice = infoDevice;
     }
 
+    public Nodo(Proceso infoProceso) {
+        this.infoProceso = infoProceso;
+    }
+    
     /**
      * @return the children
      */
@@ -70,6 +75,14 @@ public class Nodo {
         this.infoDevice = infoDevice;
     }
 
+    public Proceso getInfoProceso() {
+        return infoProceso;
+    }
+
+    public void setInfoProceso(Proceso infoProceso) {
+        this.infoProceso = infoProceso;
+    }
+    
     /**
      * @return the parent
      */

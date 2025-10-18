@@ -16,7 +16,10 @@ public class Device {
         this.id = id;
         this.semaf = new Semaforo();
     }
-    
+
+    public Semaforo getSemaf() {
+        return semaf;
+    }
     /**
      * @return the id
      */
