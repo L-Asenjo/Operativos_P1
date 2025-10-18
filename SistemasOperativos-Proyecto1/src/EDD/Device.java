@@ -10,7 +10,13 @@ package EDD;
  */
 public class Device {
     private int id;
+    private Semaforo semaf;
 
+    public Device(int id) {
+        this.id = id;
+        this.semaf = new Semaforo();
+    }
+    
     /**
      * @return the id
      */
