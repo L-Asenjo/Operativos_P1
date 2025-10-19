@@ -15,7 +15,6 @@ public class Scheduler {
     private Lista processList; //Lista en la cual se guardan todos los procesos a ejecutar.
     private int memoryAvaiable;
                                      //Se agregan desde la interfaz
-    Dispatcher dispatcher = new Dispatcher();
 
     public Scheduler(Lista processList, int memorySpace) {
         this.processList = processList;
@@ -38,7 +37,7 @@ public class Scheduler {
     */
     
     // quantum medido en ms
-    public void RoundRobin (int setQuantum, Cola readyQueue, Cola blockedQueue, Cola suspendedQueue){
+    public void RoundRobin (int setQuantum, Cola readyQueue, Cola blockedQueue, Cola suspendedQueue, Dispatcher dispatcher){
         int quantum = setQuantum;
          
         while(readyQueue.getCount() > 0){
@@ -47,19 +46,11 @@ public class Scheduler {
             memoryAvaiable = memoryAvaiable - ((Nodo)processToActivate).getInfoProceso().getMemorySpace();
             
             // No se si hacer un double loop aqui. En teoria no
-            dispatcher.activate(pcbOfActiveProcess, processList);
+            dispatcher.activate(pcbOfActiveProcess, processList); // ready ---> running
             Proceso toRun = dispatcher.getActiveProcess(processList);
-            toRun.run();
             
-            if (memoryAvaiable > 0){
-                if (((Nodo)processToActivate).getInfoProceso().getTimeSpent() > quantum){
-                    toRun.interrupt();
-                    var aux = readyQueue.get(0);
-                    readyQueue.dequeue();
-                    readyQueue.enqueue(aux);
-                }
-            } else {
-                toRun.interrupt();
+            if (((Nodo)processToActivate).getInfoProceso().getTimeSpent() > quantum){
+                dispatcher.deactivate(toRun);   // running --> ready
                 var aux = readyQueue.get(0);
                 readyQueue.dequeue();
                 readyQueue.enqueue(aux);
@@ -71,7 +62,6 @@ public class Scheduler {
             }
         }
     }
-    
     
     
     public void SPN(){
