@@ -137,7 +137,7 @@ public class Lista {
     }
 
     /**
-     * Procedimiento para contener el nombre de los elementos una lista de nodos.
+     * Procedimiento para contener la metadata de los elementos una lista de nodos.
      * 
      * @return String con la información indicada.
      */
@@ -146,7 +146,9 @@ public class Lista {
         
         for (int i = 0; i < count(); i++) {
             if ((Nodo)get(i)!= null) {
-                //txt = txt + "\n"+ ((Nodo)get(i)).getInfo().getName();
+                txt = txt + "\n"+ ((Nodo)get(i)).getInfoPCB() 
+                        + "\n"+ ((Nodo)get(i)).getInfoProceso()
+                        + "\n"+ ((Nodo)get(i)).getInfoDevice() + "\n";
             }
         }
         return txt;
@@ -194,6 +196,20 @@ public class Lista {
         int aux = ((Nodo) this.value.getValue()).getInfoPCB().getId();
 
         if (this.value != null && aux ==(((Nodo) value).getInfoPCB().getId())) {
+            return this.value.getIndex();
+        } else {
+            if (this.next != null) {
+                return this.next.indexOfPCB(value);
+            } else {
+                return -1;
+            }
+        }
+    }
+    
+    public int indexOfProceso(Object value) {
+        int aux = ((Nodo) this.value.getValue()).getInfoProceso().getPcb().getId();
+
+        if (this.value != null && aux ==(((Nodo) value).getInfoProceso().getPcb().getId())) {
             return this.value.getIndex();
         } else {
             if (this.next != null) {

@@ -17,7 +17,7 @@ public class Dispatcher extends Thread{
         int i = 0;
         var procesoAux = procesos.get(i);
         while (i < procesos.count()){
-            if (pcb.getId() == procesos.get(i).getPcb().getId()){
+            if (pcb.getId() == ((Nodo)procesos.get(i)).getInfoPCB().getId()){
                 procesoAux = procesos.get(i);
                 break;
             } else {
