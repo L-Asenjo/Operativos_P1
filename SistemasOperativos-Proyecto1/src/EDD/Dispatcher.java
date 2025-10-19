@@ -8,7 +8,7 @@ package EDD;
  *
  * @author Eddy
  */
-public class Dispatcher extends Thread{
+public class Dispatcher {
 
     public Dispatcher() {
     }
@@ -24,15 +24,30 @@ public class Dispatcher extends Thread{
                 i++;
             } 
         }
+        
+        ((Nodo) procesoAux).getInfoProceso().getPcb().setStatus("running");
         /*
         aqui se corre el proceso una vez obtenido
         procesoAux.run();*/
     }
     
     public Proceso deactivate(Proceso activeProcess) {
-        /*
-            Aqui se deja de correr el proceso
-        */
+        activeProcess.getPcb().setStatus("terminated");
         return activeProcess;
+    }
+    
+    public Proceso getActiveProcess(Lista procesos){
+        int i = 0;
+        var procesoAux = procesos.get(i);
+        while (i < procesos.count()){
+            if (((Nodo)procesoAux).getInfoPCB().getStatus() == "running"){
+                procesoAux = procesos.get(i);
+                break;
+            } else {
+                i++;
+            } 
+        }
+        
+        return (Proceso) procesoAux;
     }
 }

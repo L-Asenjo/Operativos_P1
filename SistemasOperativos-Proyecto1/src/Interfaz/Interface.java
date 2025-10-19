@@ -4,7 +4,11 @@
  */
 package Interfaz;
 
-import java.awt.Color;
+import EDD.Cola;
+import EDD.Lista;
+import EDD.Nodo;
+import EDD.PCB;
+import EDD.Scheduler;
 
 /**
  *
@@ -12,11 +16,32 @@ import java.awt.Color;
  */
 public class Interface extends javax.swing.JFrame {
 
+    private Lista processList;
+    private Scheduler scheduler;
+    private int memorySpace = 4000;
+    private Cola readyQueue = new Cola();
+    private Cola blockedQueue = new Cola();
+    private Cola suspendedQueue = new Cola();
+    
+    public Cola fillReadyQueue(){
+        //Cola readyQueue = new Cola();
+        for (int i = 0; i < processList.count(); i++){
+            PCB auxProcessPCB = ((Nodo) processList.get(i)).getInfoProceso().getPcb();
+            if (auxProcessPCB.getStatus() == "ready"){
+                readyQueue.enqueue(processList.get(i));
+            } else{
+                i++;
+            }
+        }
+        return readyQueue;
+    }
     /**
      * Creates new form Interface
      */
     public Interface() {
         initComponents();
+        
+        
     }
 
     /**
@@ -31,7 +56,8 @@ public class Interface extends javax.swing.JFrame {
         selection = new javax.swing.JTabbedPane();
         sim_panel = new java.awt.Panel();
         panel1 = new java.awt.Panel();
-        label2 = new java.awt.Label();
+        round_robin_button = new javax.swing.JButton();
+        generate_process = new javax.swing.JButton();
         config_panel = new java.awt.Panel();
         label1 = new java.awt.Label();
         statistics_panel = new java.awt.Panel();
@@ -49,41 +75,56 @@ public class Interface extends javax.swing.JFrame {
 
         panel1.setBackground(new java.awt.Color(201, 255, 238));
 
-        label2.setForeground(new java.awt.Color(51, 51, 51));
-        label2.setText("AAAAAAAAAAAAAAAAAAA");
+        round_robin_button.setText("Round robin");
+        round_robin_button.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                round_robin_buttonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout panel1Layout = new javax.swing.GroupLayout(panel1);
         panel1.setLayout(panel1Layout);
         panel1Layout.setHorizontalGroup(
             panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel1Layout.createSequentialGroup()
-                .addGap(70, 70, 70)
-                .addComponent(label2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(139, Short.MAX_VALUE))
+                .addGap(122, 122, 122)
+                .addComponent(round_robin_button)
+                .addContainerGap(149, Short.MAX_VALUE))
         );
         panel1Layout.setVerticalGroup(
             panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel1Layout.createSequentialGroup()
-                .addGap(67, 67, 67)
-                .addComponent(label2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(73, Short.MAX_VALUE))
+                .addGap(66, 66, 66)
+                .addComponent(round_robin_button)
+                .addContainerGap(71, Short.MAX_VALUE))
         );
+
+        generate_process.setText("generar procesos");
+        generate_process.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                generate_processActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout sim_panelLayout = new javax.swing.GroupLayout(sim_panel);
         sim_panel.setLayout(sim_panelLayout);
         sim_panelLayout.setHorizontalGroup(
             sim_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(sim_panelLayout.createSequentialGroup()
-                .addGap(62, 62, 62)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, sim_panelLayout.createSequentialGroup()
+                .addGap(52, 52, 52)
+                .addComponent(generate_process)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 372, Short.MAX_VALUE)
                 .addComponent(panel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(547, Short.MAX_VALUE))
+                .addGap(44, 44, 44))
         );
         sim_panelLayout.setVerticalGroup(
             sim_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(sim_panelLayout.createSequentialGroup()
-                .addGap(126, 126, 126)
-                .addComponent(panel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(260, Short.MAX_VALUE))
+                .addGap(48, 48, 48)
+                .addGroup(sim_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(generate_process)
+                    .addComponent(panel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(338, Short.MAX_VALUE))
         );
 
         selection.addTab("Simulación", sim_panel);
@@ -173,6 +214,18 @@ public class Interface extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void round_robin_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_round_robin_buttonActionPerformed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_round_robin_buttonActionPerformed
+
+    private void generate_processActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generate_processActionPerformed
+        // TODO add your handling code here:
+        
+        
+        this.scheduler = new Scheduler(processList, memorySpace);
+    }//GEN-LAST:event_generate_processActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -210,12 +263,13 @@ public class Interface extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private java.awt.Panel config_panel;
+    private javax.swing.JButton generate_process;
     private java.awt.Panel graphics_panel;
     private java.awt.Label label1;
-    private java.awt.Label label2;
     private java.awt.Label label3;
     private java.awt.Label label4;
     private java.awt.Panel panel1;
+    private javax.swing.JButton round_robin_button;
     private javax.swing.JTabbedPane selection;
     private java.awt.Panel sim_panel;
     private java.awt.Panel statistics_panel;

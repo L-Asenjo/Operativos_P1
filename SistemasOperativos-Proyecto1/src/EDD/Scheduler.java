@@ -8,30 +8,79 @@ package EDD;
  *
  * @author miche_ysmoa6e
  */
-public class Scheduler extends Thread {
+public class Scheduler {
     
-    Lista processList = new Lista(); //Lista en la cual se guardan los procesos a ejecutar
-    // Creo que deberíamos hacer que se reinicien cuando se cambia de planificación
+    // Tomando que 1 ciclo de ejecución del CPU son 0.00001ms
     
-    public void RoundRobin (int setQuantum){
-        Cola readyQueue = new Cola();
-        int nextInLine = 0; //Índice del siguiente elemento a ejecutar
-        int quantum = setQuantum;
-        int timeStamp = 0; //Manejar el tiempo utilizado por el proceso
-        
-        
+    private Lista processList; //Lista en la cual se guardan todos los procesos a ejecutar.
+    private int memoryAvaiable;
+                                     //Se agregan desde la interfaz
+    Dispatcher dispatcher = new Dispatcher();
+
+    public Scheduler(Lista processList, int memorySpace) {
+        this.processList = processList;
+        this.memoryAvaiable = memorySpace;
     }
     
     /*
-    
-    Por definir, lo comenté para que no salga el símbolo de error
-    public SPN(){
-    
-    }
-    
-    public PriorityPlanification(){
-    
+    public Cola fillReadyQueue(){
+        Cola readyQueue = new Cola();
+        for (int i = 0; i < processList.count(); i++){
+            PCB auxProcessPCB = ((Nodo) processList.get(i)).getInfoProceso().getPcb();
+            if (auxProcessPCB.getStatus() == "ready"){
+                readyQueue.enqueue(processList.get(i));
+            } else{
+                i++;
+            }
+        }
+        return readyQueue;
     }
     */
+    
+    // quantum medido en ms
+    public void RoundRobin (int setQuantum, Cola readyQueue, Cola blockedQueue, Cola suspendedQueue){
+        int quantum = setQuantum;
+         
+        while(readyQueue.getCount() > 0){
+            var processToActivate = readyQueue.get(0);
+            PCB pcbOfActiveProcess = ((Nodo)processToActivate).getInfoProceso().getPcb();
+            memoryAvaiable = memoryAvaiable - ((Nodo)processToActivate).getInfoProceso().getMemorySpace();
+            
+            // No se si hacer un double loop aqui. En teoria no
+            dispatcher.activate(pcbOfActiveProcess, processList);
+            Proceso toRun = dispatcher.getActiveProcess(processList);
+            toRun.run();
+            
+            if (memoryAvaiable > 0){
+                if (((Nodo)processToActivate).getInfoProceso().getTimeSpent() > quantum){
+                    toRun.interrupt();
+                    var aux = readyQueue.get(0);
+                    readyQueue.dequeue();
+                    readyQueue.enqueue(aux);
+                }
+            } else {
+                toRun.interrupt();
+                var aux = readyQueue.get(0);
+                readyQueue.dequeue();
+                readyQueue.enqueue(aux);
+            }
+            
+            if (toRun.getProcessingTime() == toRun.getTimeSpent()){
+                dispatcher.deactivate(toRun);
+                readyQueue.dequeue();
+            }
+        }
+    }
+    
+    
+    
+    public void SPN(){
+    
+    }
+    
+    public void PriorityPlanification(){
+    
+    }
+    
     
 }
