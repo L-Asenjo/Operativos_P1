@@ -37,7 +37,7 @@ public class Scheduler {
     */
     
     // quantum medido en ms
-    public void RoundRobin (int setQuantum, Cola readyQueue, Cola blockedQueue, Cola suspendedQueue, Dispatcher dispatcher){
+    public void RoundRobin (int setQuantum, Cola readyQueue, Dispatcher dispatcher){
         int quantum = setQuantum;
          
         while(readyQueue.getCount() > 0){
@@ -64,13 +64,12 @@ public class Scheduler {
     }
     
     
-    public void SPN(){
+    public void SPN(Cola readyQueue, Dispatcher dispatcher){
     
     }
     
-    public void PriorityPlanification(){
+    public void PriorityPlanification(Cola readyQueue, Dispatcher dispatcher){
     
     }
-    
     
 }
