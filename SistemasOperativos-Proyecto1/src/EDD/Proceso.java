@@ -11,25 +11,17 @@ package EDD;
 public class Proceso extends Thread {
     private PCB pcb;
     private String bound;
-    private int ioCicles;
-    private int satisfyCicles;
     private int instructions;
     private double processingTime = instructions * 0.005; //5ms por cada instruccion
     private int timeSpent = 0;
     private int memorySpace = instructions * 4;
+    private int priority;
+    private int timesIn;
 
     public Proceso(int id, String name, String bound, int instructions) {
         this.pcb = new PCB(id, name);
         this.bound = bound;
         this.instructions = instructions;
-    }
-
-    public Proceso(int id, String name, String bound, int instructions, int ioCicles, int satisfyCicles) {
-        this.pcb = new PCB(id, name);
-        this.bound = bound;
-        this.instructions = instructions;
-        this.ioCicles = ioCicles;
-        this.satisfyCicles = satisfyCicles;
     }
 
     public PCB getPcb() {
@@ -42,22 +34,6 @@ public class Proceso extends Thread {
 
     public void setBound(String bound) {
         this.bound = bound;
-    }
-
-    public int getIoCicles() {
-        return ioCicles;
-    }
-
-    public void setIoCicles(int ioCicles) {
-        this.ioCicles = ioCicles;
-    }
-
-    public int getSatisfyCicles() {
-        return satisfyCicles;
-    }
-
-    public void setSatisfyCicles(int satisfyCicles) {
-        this.satisfyCicles = satisfyCicles;
     }
 
     public int getInstructions() {
