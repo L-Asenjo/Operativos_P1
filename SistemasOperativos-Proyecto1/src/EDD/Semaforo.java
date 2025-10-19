@@ -10,37 +10,37 @@ package EDD;
  */
 public class Semaforo {
     private Cola queue;
-    private int available;
+    private int mutex;
 
-    public Semaforo(int id) {
+    public Semaforo() {
         this.queue = new Cola();
-        this.available = 1;
+        this.mutex = 1;
     }
 
-    public int getAvailable() {
-        return available;
+    public int getMutex() {
+        return mutex;
     }
 
-    public void setAvailable(int available) {
-        this.available = available;
+    public void setMutex(int mutex) {
+        this.mutex = mutex;
     }
     
     public boolean isAvailable(){
-        return getAvailable()>0;
+        return getMutex()>0;
     }
     
-    public void newRequest(Object j){
-        int update = getAvailable() - 1;
-        setAvailable(update);
+    public void semWait(Object j){
+        int update = getMutex() - 1;
+        setMutex(update);
         
         if (!isAvailable()){
             queue.enqueue(j);
         }
     }
     
-    public Object nextRequest(){
-        int update = getAvailable() + 1;
-        setAvailable(update);
+    public Object semSignal(){
+        int update = getMutex() + 1;
+        setMutex(update);
         
         if (!isAvailable()) {
             Object next = queue.dequeue();
