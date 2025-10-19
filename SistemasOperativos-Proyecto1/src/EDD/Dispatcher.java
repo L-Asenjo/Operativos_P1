@@ -28,9 +28,6 @@ public class Dispatcher {
         ((Nodo) procesoAux).getInfoProceso().getPcb().setStatus("running");
         ((Nodo) procesoAux).getInfoProceso().run();
         
-        /*
-        aqui se corre el proceso una vez obtenido
-        procesoAux.run();*/
     }
     
     public Proceso deactivate(Proceso activeProcess) {

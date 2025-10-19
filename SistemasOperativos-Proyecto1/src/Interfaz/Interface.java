@@ -227,7 +227,7 @@ public class Interface extends javax.swing.JFrame {
         p1.getPcb().setStatus("ready"); // marcar como listo para ejecución
 
         // 2) Proceso I/O-bound (con ciclos de I/O)
-        Proceso p2 = new Proceso(2, "P2_io", "IO", 200, 5, 2); // ioCicles=5, satisfyCicles=2
+        Proceso p2 = new Proceso(2, "P2_io", "IO", 200); // ioCicles=5, satisfyCicles=2
         p2.getPcb().setStatus("blocked"); // simula que está esperando I/O
 
         // 3) Proceso corto/rápido

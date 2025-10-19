@@ -11,12 +11,18 @@ package EDD;
 public class OS {
 
     private Lista processList;
+    private Lista processTable = new Lista();
+    private Lista deviceTable = new Lista();
     private Scheduler scheduler;
     private Dispatcher dispatcher;
     private int memorySpace = 4000;
     private Cola readyQueue = new Cola();
+    private Cola longTermQueue = new Cola();
     private Cola blockedQueue = new Cola();
-    private Cola suspendedQueue = new Cola();
+    private Cola suspendedReadyQueue = new Cola();
+    private Cola suspendedBlockedQueue = new Cola();
+    private int ioCicles;
+    private int satisfyCicles;
     
     public Cola fillReadyQueue(){
         //Cola readyQueue = new Cola();
