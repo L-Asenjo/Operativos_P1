@@ -8,6 +8,7 @@ import EDD.Cola;
 import EDD.Lista;
 import EDD.Nodo;
 import EDD.PCB;
+import EDD.Proceso;
 import EDD.Scheduler;
 
 /**
@@ -16,7 +17,7 @@ import EDD.Scheduler;
  */
 public class Interface extends javax.swing.JFrame {
 
-    private Lista processList;
+    private Lista processList = new Lista();
     private Scheduler scheduler;
     private int memorySpace = 4000;
     private Cola readyQueue = new Cola();
@@ -220,10 +221,49 @@ public class Interface extends javax.swing.JFrame {
     }//GEN-LAST:event_round_robin_buttonActionPerformed
 
     private void generate_processActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generate_processActionPerformed
-        // TODO add your handling code here:
         
+         // 1) Proceso CPU-bound corto (ejemplo: 100 instrucciones)
+        Proceso p1 = new Proceso(1, "P1_init", "CPU", 100);
+        p1.getPcb().setStatus("ready"); // marcar como listo para ejecución
+
+        // 2) Proceso I/O-bound (con ciclos de I/O)
+        Proceso p2 = new Proceso(2, "P2_io", "IO", 200, 5, 2); // ioCicles=5, satisfyCicles=2
+        p2.getPcb().setStatus("blocked"); // simula que está esperando I/O
+
+        // 3) Proceso corto/rápido
+        Proceso p3 = new Proceso(3, "P3_short", "CPU", 20);
+        p3.getPcb().setStatus("ready");
+
+        // Encapsular cada Proceso en un Nodo (constructores definidos en Nodo)
+        Nodo n1 = new Nodo(p1);
+        Nodo n2 = new Nodo(p2);
+        Nodo n3 = new Nodo(p3);
+        
+        processList.add(n1);
+        processList.add(n2);
+        processList.add(n3);
         
         this.scheduler = new Scheduler(processList, memorySpace);
+        
+        /*
+        System.out.println("Procesos creados: " + processList.count());
+        for (int i = 0; i < processList.count(); i++) {
+            Nodo node = (Nodo) processList.get(i);
+            Proceso proc = node.getInfoProceso();
+            PCB pcb = proc.getPcb();
+
+            int pid = pcb.getId();
+            String status = pcb.getStatus();
+            String bound = proc.getBound();
+            int instr = proc.getInstructions();
+            double processingTimeMs = instr * 0.005; // cálculo local (5 ms por instrucción = 0.005 ms por instrucción)
+            int memoryKb = instr * 4; // cálculo local (4 KB por instrucción, si esa es la convención)
+            boolean needsIo = proc.getIoCicles() > 0;
+
+            System.out.printf("PID=%d | bound=%s | status=%s | instr=%d | procTime=%.3f ms | mem=%d KB | io=%b%n",
+                    pid, bound, status, instr, processingTimeMs, memoryKb, needsIo);
+        }
+        */
     }//GEN-LAST:event_generate_processActionPerformed
 
     /**
