@@ -21,20 +21,6 @@ public class Scheduler {
         this.memoryAvaiable = memorySpace;
     }
     
-    /*
-    public Cola fillReadyQueue(){
-        Cola readyQueue = new Cola();
-        for (int i = 0; i < processList.count(); i++){
-            PCB auxProcessPCB = ((Nodo) processList.get(i)).getInfoProceso().getPcb();
-            if (auxProcessPCB.getStatus() == "ready"){
-                readyQueue.enqueue(processList.get(i));
-            } else{
-                i++;
-            }
-        }
-        return readyQueue;
-    }
-    */
     
     // quantum medido en ms
     public void RoundRobin (int setQuantum, Cola readyQueue, Dispatcher dispatcher){
@@ -43,10 +29,12 @@ public class Scheduler {
         while(readyQueue.getCount() > 0){
             var processToActivate = readyQueue.get(0);
             PCB pcbOfActiveProcess = ((Nodo)processToActivate).getInfoProceso().getPcb();
-            memoryAvaiable = memoryAvaiable - ((Nodo)processToActivate).getInfoProceso().getMemorySpace();
             
-            // No se si hacer un double loop aqui. En teoria no
-            dispatcher.activate(pcbOfActiveProcess, processList); // ready ---> running
+            // verificar si el proceso ya está activado y si no lo está, activarlo
+            if (pcbOfActiveProcess.getStatus() != "running"){
+                dispatcher.activate(pcbOfActiveProcess, processList); // ready ---> running
+            }
+            
             Proceso toRun = dispatcher.getActiveProcess(processList);
             
             if (((Nodo)processToActivate).getInfoProceso().getTimeSpent() > quantum){
@@ -65,11 +53,120 @@ public class Scheduler {
     
     
     public void SPN(Cola readyQueue, Dispatcher dispatcher){
-    
+        while(readyQueue.getCount() > 0){
+            var processToActivate = readyQueue.get(0);
+            PCB pcbOfActiveProcess = ((Nodo)processToActivate).getInfoProceso().getPcb();
+            
+            // verificar si el proceso ya está activado y si no lo está, activarlo
+            if (pcbOfActiveProcess.getStatus() != "running"){
+                dispatcher.activate(pcbOfActiveProcess, processList); // ready ---> running
+            }
+            
+            Proceso toRun = dispatcher.getActiveProcess(processList);
+            if (toRun.getProcessingTime() == toRun.getTimeSpent()){
+                dispatcher.deactivate(toRun);
+                readyQueue.dequeue();
+            }
+        }
     }
     
-    public void PriorityPlanification(Cola readyQueue, Dispatcher dispatcher){
-    
+    public void PriorityPlanification(Cola readyQueue, Dispatcher dispatcher, Lista priorityList){
+        for (int i = 0; i < priorityList.count(); i++){
+            Cola act = (Cola)priorityList.get(i);
+            var processToActivate = act.get(0);
+            PCB pcbOfActiveProcess = ((Nodo)processToActivate).getInfoProceso().getPcb();
+                
+            while (act.getCount() > 0){
+                if (pcbOfActiveProcess.getStatus() != "running"){
+                    dispatcher.activate(pcbOfActiveProcess, act.getQueue());
+                }
+                
+                Proceso toRun = dispatcher.getActiveProcess(processList);
+                if (toRun.getProcessingTime() == toRun.getTimeSpent()){
+                    dispatcher.deactivate(toRun);
+                    act.dequeue();
+                }
+            }
+        }
     }
+    
+    //La lista de prioridades es una lista que contiene las prioridades
+    public Lista reorganicePriorityPlanification(Cola readyQueue, Lista priorityList){
+        
+        // Creando la cantidad de colas necesarias segun las prioridades existentes
+        if (priorityList.count() < 1){
+            int maxpriority = getPriorities(readyQueue);
+            
+            for (int i = 0; i < maxpriority; i++){
+                Cola aux = new Cola();
+                priorityList.add(aux);
+            }
+        } 
+        
+        // Agregar cada proceso a su lista de prioridad correspondiente
+        for (int j=0; j < readyQueue.getCount(); j++){
+            Nodo aux = (Nodo)readyQueue.get(j);
+            
+            for (int x=0; x < priorityList.count(); x++){
+                Cola act = (Cola)priorityList.get(x);
+                
+                if(aux.getInfoProceso().getPriority() == x){
+                    act.enqueue(aux.getInfoProceso());
+                }
+            }
+        }
+    
+        return priorityList;
+    }
+    
+    public void reorganiceSPN(Cola readyQueue){
+        for (int i = 0; i < readyQueue.getCount()-1; i++){
+            
+            Nodo first = (Nodo)readyQueue.get(i);
+            Nodo next = (Nodo)readyQueue.get(i+1);
+            if (first == null || next == null){break;}
+            
+            Proceso actualProcess = first.getInfoProceso();
+            Proceso nextProcess = next.getInfoProceso();
+            if (actualProcess == null || nextProcess == null){break;}
+
+            // Se intercambian los procesos dentro de los nodos
+            if (actualProcess.getProcessingTime() > nextProcess.getProcessingTime()){
+                swapNodes(first, next);
+            }
+        }
+    }
+    
+    public int getPriorities(Cola readyQueue){
+        Lista priorities = new Lista();
+        
+        for (int i = 0; i < readyQueue.getCount(); i++){
+            Nodo aux = (Nodo)readyQueue.get(i);
+            if (!priorities.contains(aux.getInfoProceso().getPriority())){
+                priorities.add(aux.getInfoProceso().getPriority());
+            }
+        }
+        
+        return priorities.count();
+    }
+    
+    public void swapNodes(Nodo first, Nodo next){
+        // Intercambio de procesos
+        Proceso auxProcess = first.getInfoProceso();
+        first.setInfoProceso(next.getInfoProceso());
+        next.setInfoProceso(auxProcess);
+        
+        // Intercambio de PCB
+        PCB auxPBC = first.getInfoPCB();
+        first.setInfoPCB(next.getInfoPCB());
+        next.setInfoPCB(auxPBC);
+        
+        // Intercambio de Device
+        Device auxDevice = first.getInfoDevice();
+        first.setInfoDevice(next.getInfoDevice());
+        next.setInfoDevice(auxDevice);
+    }
+    
+    
     
 }
