@@ -72,5 +72,17 @@ public class Scheduler {
     
     }
     
-    
+    public void Feedback(Lista readyQueueList, Dispatcher dispatcher) {
+        int i = 0;
+        while (i <= readyQueueList.count()){
+            if (((Cola)readyQueueList.get(i)).getCount() > 0){
+                var processToActivate = ((Cola)readyQueueList.get(i)).dequeue();
+                PCB pcbOfActiveProcess = ((Nodo)processToActivate).getInfoProceso().getPcb();
+                dispatcher.activate(pcbOfActiveProcess, processList);
+                break;
+            }
+            i++;
+        }
+        
+    }
 }
