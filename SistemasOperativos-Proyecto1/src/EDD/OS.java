@@ -16,6 +16,8 @@ public class OS {
     private Scheduler scheduler;
     private Dispatcher dispatcher;
     private int memorySpace = 4000;
+    private Lista priorityList = new Lista();
+    private Lista feedbackList = new Lista();
     private Cola readyQueue = new Cola();
     private Cola longTermQueue = new Cola();
     private Cola blockedQueue = new Cola();
@@ -36,4 +38,8 @@ public class OS {
         }
         return readyQueue;
     }
+    
+    
+    
+    
 }

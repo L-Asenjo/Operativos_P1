@@ -14,10 +14,13 @@ public class PCB {
     private String name;
     private int pc;
     private int mar;
+    private int priority;
+    private int timesIn;
+    private float priorityFSS;
 
     public PCB(int id, String name) {
         this.id = id;
-        this.status = "New";
+        this.status = "new";
         this.name = name;
         this.pc = 0;
         this.mar = 0;
@@ -46,8 +49,27 @@ public class PCB {
     public void setMar(int mar) {
         this.mar = mar;
     }
-    
-    
+
+    public int getPriority() {
+        return priority;
+    }
+
+    public int getTimesIn() {
+        return timesIn;
+    }
+
+    public void setTimesIn(int timesIn) {
+        this.timesIn = timesIn;
+    }
+
+    public float getPriorityFSS() {
+        return priorityFSS;
+    }
+
+    public void setPriorityFSS(float priorityFSS) {
+        this.priorityFSS = priorityFSS;
+    }
+        
     public void update(String status, int pc, int mar) {
         setStatus(status);
         setPc(pc);

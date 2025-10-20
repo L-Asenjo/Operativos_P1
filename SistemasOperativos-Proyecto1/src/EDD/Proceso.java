@@ -15,8 +15,7 @@ public class Proceso extends Thread {
     private double processingTime = instructions * 0.005; //5ms por cada instruccion
     private int timeSpent = 0;
     private int memorySpace = instructions * 4;
-    private int priority;
-    private int timesIn;
+
 
     public Proceso(int id, String name, String bound, int instructions) {
         this.pcb = new PCB(id, name);
@@ -64,7 +63,7 @@ public class Proceso extends Thread {
     public int getMemorySpace() {
         return memorySpace;
     }
-    
+
     @Override //La clase thread ya tiene una clase run
     public void run(){
         
