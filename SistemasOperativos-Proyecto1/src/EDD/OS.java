@@ -23,8 +23,7 @@ public class OS {
     private Cola blockedQueue = new Cola();
     private Cola suspendedReadyQueue = new Cola();
     private Cola suspendedBlockedQueue = new Cola();
-    private int ioCicles;
-    private int satisfyCicles;
+    private Lista terminatedProcessList = new Lista();
     
     public Cola fillReadyQueue(){
         //Cola readyQueue = new Cola();

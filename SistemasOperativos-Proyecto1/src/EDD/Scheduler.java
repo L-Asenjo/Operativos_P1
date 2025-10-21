@@ -243,18 +243,64 @@ public class Scheduler {
     }
     
     public void reorganiceFSS (Cola readyQueue){
-        int i = 1;
+        int i = 0;
         int n = readyQueue.getCount();
         while (i < n){
             Nodo aux = (Nodo)readyQueue.get(i);
-            int j = i - 1;
+            int j = i + 1;
             
-            while (j >= 0 && ((Nodo)readyQueue.get(j)).getInfoPCB().getPriorityFSS() > aux.getInfoPCB().getPriorityFSS()){
-                readyQueue.getQueue();
+            while (j < n){
+                Nodo aux2 = (Nodo)readyQueue.get(j);
+                if (aux.getInfoPCB().getPriorityFSS()>aux2.getInfoPCB().getPriorityFSS()){
+                    swapNodes(aux, aux2);
+                }
+                j++;
             }
-            /*
-                esto esta incompleto pero no doy más por hoy
-            */
+            i++;
+        }
+    }
+    
+    public void recalculateFSS (Cola readyQueue, int priority) {
+        int i = 0;
+        int n = readyQueue.getCount();
+        int timesInTotal = 0;
+        int priorityCount = 0;
+        while (i < n) {
+            if (((Nodo)readyQueue.get(i)).getInfoPCB().getPriority() == priority) {
+                timesInTotal = ((Nodo)readyQueue.get(i)).getInfoPCB().getTimesIn() + timesInTotal;
+                priorityCount++;
+            }
+            i++;
+        }
+        i = 0;
+        while (i < n) {
+            if (((Nodo)readyQueue.get(i)).getInfoPCB().getPriority() == priority) {
+                int priorityNode = ((Nodo)readyQueue.get(i)).getInfoPCB().getPriority();
+                int timesIn = ((Nodo)readyQueue.get(i)).getInfoPCB().getTimesIn();
+                
+                float newPriorityFSS = priorityNode + timesIn + (timesInTotal/priorityCount);
+                
+                ((Nodo)readyQueue.get(i)).getInfoPCB().setPriorityFSS(newPriorityFSS);
+            }
+            i++;
+        }
+    }
+    
+    
+    public void reorganiceSRT (Cola readyQueue){
+        int i = 0;
+        int n = readyQueue.getCount();
+        while (i < n){
+            Nodo aux = (Nodo)readyQueue.get(i);
+            int j = i + 1;
+            
+            while (j < n){
+                Nodo aux2 = (Nodo)readyQueue.get(j);
+                if (aux.getInfoPCB().getPriorityFSS()>aux2.getInfoPCB().getPriorityFSS()){
+                    swapNodes(aux, aux2);
+                }
+                j++;
+            }
             i++;
         }
     }

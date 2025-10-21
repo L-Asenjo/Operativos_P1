@@ -3,12 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/miche_ysmoa6e/Documents/Operativos/Operativos_P1/SistemasOperativos-Proyecto1/src/EDD/Pila.java</file>
-            <file>file:/C:/Users/miche_ysmoa6e/Documents/Operativos/Operativos_P1/SistemasOperativos-Proyecto1/src/EDD/Device.java</file>
-            <file>file:/C:/Users/miche_ysmoa6e/Documents/Operativos/Operativos_P1/SistemasOperativos-Proyecto1/src/EDD/Nodo.java</file>
-            <file>file:/C:/Users/miche_ysmoa6e/Documents/Operativos/Operativos_P1/SistemasOperativos-Proyecto1/src/EDD/PCB.java</file>
-            <file>file:/C:/Users/miche_ysmoa6e/Documents/Operativos/Operativos_P1/SistemasOperativos-Proyecto1/src/EDD/Lista.java</file>
-            <file>file:/C:/Users/miche_ysmoa6e/Documents/Operativos/Operativos_P1/SistemasOperativos-Proyecto1/src/EDD/ElementoLista.java</file>
+            <file>file:/C:/Users/Eddy/Documents/Luis/Metro/Sistemas%20Operativos/SistemasOperativos-Proyecto1/src/EDD/Proceso.java</file>
+            <file>file:/C:/Users/Eddy/Documents/Luis/Metro/Sistemas%20Operativos/SistemasOperativos-Proyecto1/src/EDD/Scheduler.java</file>
+            <file>file:/C:/Users/Eddy/Documents/Luis/Metro/Sistemas%20Operativos/SistemasOperativos-Proyecto1/src/EDD/Cola.java</file>
+            <file>file:/C:/Users/Eddy/Documents/Luis/Metro/Sistemas%20Operativos/SistemasOperativos-Proyecto1/src/EDD/Lista.java</file>
+            <file>file:/C:/Users/Eddy/Documents/Luis/Metro/Sistemas%20Operativos/SistemasOperativos-Proyecto1/src/EDD/PCB.java</file>
+            <file>file:/C:/Users/Eddy/Documents/Luis/Metro/Sistemas%20Operativos/SistemasOperativos-Proyecto1/src/EDD/OS.java</file>
         </group>
     </open-files>
 </project-private>
