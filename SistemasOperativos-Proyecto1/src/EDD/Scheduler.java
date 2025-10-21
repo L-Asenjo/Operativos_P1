@@ -28,7 +28,7 @@ public class Scheduler {
          
         while(readyQueue.getCount() > 0){
             var processToActivate = readyQueue.get(0);
-            PCB pcbOfActiveProcess = ((Nodo)processToActivate).getInfoProceso().getPcb();
+            PCB pcbOfActiveProcess = ((Nodo)processToActivate).getInfoPCB();
             
             // verificar si el proceso ya está activado y si no lo está, activarlo
             if (pcbOfActiveProcess.getStatus() != "running"){
@@ -188,7 +188,7 @@ public class Scheduler {
             for (int x=0; x < priorityList.count(); x++){
                 Cola act = (Cola)priorityList.get(x);
                 
-                if(aux.getInfoProceso().getPriority() == x){
+                if(aux.getInfoProceso().getPriority() == x & !act.getQueue().contains(aux)){
                     act.enqueue(aux.getInfoProceso());
                 }
             }
