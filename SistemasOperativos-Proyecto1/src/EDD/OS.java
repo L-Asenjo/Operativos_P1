@@ -16,13 +16,14 @@ public class OS {
     private Scheduler scheduler;
     private Dispatcher dispatcher;
     private int memorySpace = 4000;
+    private Lista priorityList = new Lista();
+    private Lista feedbackList = new Lista();
     private Cola readyQueue = new Cola();
     private Cola longTermQueue = new Cola();
     private Cola blockedQueue = new Cola();
     private Cola suspendedReadyQueue = new Cola();
     private Cola suspendedBlockedQueue = new Cola();
-    private int ioCicles;
-    private int satisfyCicles;
+    private Lista terminatedProcessList = new Lista();
     
     public Cola fillReadyQueue(){
         //Cola readyQueue = new Cola();

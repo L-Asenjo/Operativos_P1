@@ -90,6 +90,84 @@ public class Scheduler {
         }
     }
     
+    public void Feedback(int setQuantum, Cola readyQueue, Lista readyQueueList, Dispatcher dispatcher) {
+        int quantum = setQuantum;
+        int i = 0;
+        Object processToActivate = null;
+        while (i < readyQueueList.count()){
+            if (((Cola)readyQueueList.get(i)).getCount() > 0){
+                
+                processToActivate = (((Cola)readyQueueList.get(i)).dequeue());
+                dispatcher.activate(((Nodo)(processToActivate)).getInfoPCB(), processList);
+                
+                readyQueue.getQueue().remove(readyQueue.getQueue().indexOfPCB(processToActivate));
+                break;
+            }
+            i++;
+        }
+        
+        Proceso toRun = dispatcher.getActiveProcess(processList);
+        toRun.getPcb().setTimesIn(toRun.getPcb().getTimesIn()+1);
+        while (toRun.getPcb().getStatus() == "running"){
+            if (toRun.getTimeSpent() > quantum || toRun.getProcessingTime() == toRun.getTimeSpent()){
+                dispatcher.deactivate(toRun);   // running --> ready
+            }
+        }
+        if (toRun.getProcessingTime() == toRun.getTimeSpent()) {
+            /*se termina el proceso*/
+        } else {
+            if (toRun.getPcb().getTimesIn() < readyQueueList.count()) {
+                ((Cola) readyQueueList.get(toRun.getPcb().getTimesIn())).enqueue(toRun);
+            } else {
+                Cola aux = new Cola();
+                readyQueueList.add(aux);
+                ((Cola) readyQueueList.get(toRun.getPcb().getTimesIn())).enqueue(toRun);
+            }
+        }
+    }
+
+    public void FSS(int setQuantum, Cola readyQueue, Dispatcher dispatcher) {
+        int quantum = setQuantum;
+        if (readyQueue.getCount() > 0) {
+            
+            var processToActivate = readyQueue.dequeue();
+            dispatcher.activate(((Nodo)processToActivate).getInfoPCB(), processList);
+            
+            Proceso toRun = dispatcher.getActiveProcess(processList);
+            
+            while (toRun.getPcb().getStatus() == "running"){
+                if (toRun.getTimeSpent() > quantum || toRun.getProcessingTime() == toRun.getTimeSpent()){
+                    dispatcher.deactivate(toRun);   // running --> ready
+                }
+                }
+                if (toRun.getProcessingTime() == toRun.getTimeSpent()) {
+                    /*se termina el proceso*/
+                } else {
+                    readyQueue.enqueue(toRun);
+                }
+        }
+    }
+    
+    public void SRT (Cola readyQueue, Dispatcher dispatcher) {
+        if (readyQueue.getCount() > 0) {
+            var processToActivate = readyQueue.dequeue();
+            dispatcher.activate(((Nodo)processToActivate).getInfoPCB(), processList);
+            
+            Proceso toRun = dispatcher.getActiveProcess(processList);
+            
+            while (toRun.getPcb().getStatus() == "running"){
+                if (toRun.getProcessingTime() == toRun.getTimeSpent()){
+                    dispatcher.deactivate(toRun);   // running --> ready
+                }
+                }
+                if (toRun.getProcessingTime() == toRun.getTimeSpent()) {
+                    /*se termina el proceso*/
+                } else {
+                    readyQueue.enqueue(toRun);
+                }
+        }
+    }
+    
     //La lista de prioridades es una lista que contiene las prioridades
     public Lista reorganicePriorityPlanification(Cola readyQueue, Lista priorityList){
         
@@ -137,6 +215,96 @@ public class Scheduler {
         }
     }
     
+    public void reorganiceFeedback (Cola readyQueue, Lista readyQueueList) {
+        
+        if (readyQueueList.count() < getTimesIn(readyQueue)){
+            int maxTimesIn = getTimesIn(readyQueue);
+            
+            int i = readyQueueList.count();
+            
+            while (i < maxTimesIn) {
+                Cola aux = new Cola();
+                readyQueueList.add(aux);
+                i++;
+            }
+        }
+        
+        int i = 0;
+        while (i < readyQueue.getCount()) {
+            int j = 0;
+            while (j < ((Cola)readyQueueList.get(i)).getCount()){
+                if (!(((Cola)readyQueueList.get(j)).getContains(readyQueue.get(i)))) {
+                    ((Cola)readyQueueList.get(j)).enqueue(readyQueue.get(i));
+                }
+                j++;
+            }
+            i++;
+        }
+    }
+    
+    public void reorganiceFSS (Cola readyQueue){
+        int i = 0;
+        int n = readyQueue.getCount();
+        while (i < n){
+            Nodo aux = (Nodo)readyQueue.get(i);
+            int j = i + 1;
+            
+            while (j < n){
+                Nodo aux2 = (Nodo)readyQueue.get(j);
+                if (aux.getInfoPCB().getPriorityFSS()>aux2.getInfoPCB().getPriorityFSS()){
+                    swapNodes(aux, aux2);
+                }
+                j++;
+            }
+            i++;
+        }
+    }
+    
+    public void recalculateFSS (Cola readyQueue, int priority) {
+        int i = 0;
+        int n = readyQueue.getCount();
+        int timesInTotal = 0;
+        int priorityCount = 0;
+        while (i < n) {
+            if (((Nodo)readyQueue.get(i)).getInfoPCB().getPriority() == priority) {
+                timesInTotal = ((Nodo)readyQueue.get(i)).getInfoPCB().getTimesIn() + timesInTotal;
+                priorityCount++;
+            }
+            i++;
+        }
+        i = 0;
+        while (i < n) {
+            if (((Nodo)readyQueue.get(i)).getInfoPCB().getPriority() == priority) {
+                int priorityNode = ((Nodo)readyQueue.get(i)).getInfoPCB().getPriority();
+                int timesIn = ((Nodo)readyQueue.get(i)).getInfoPCB().getTimesIn();
+                
+                float newPriorityFSS = priorityNode + timesIn + (timesInTotal/priorityCount);
+                
+                ((Nodo)readyQueue.get(i)).getInfoPCB().setPriorityFSS(newPriorityFSS);
+            }
+            i++;
+        }
+    }
+    
+    
+    public void reorganiceSRT (Cola readyQueue){
+        int i = 0;
+        int n = readyQueue.getCount();
+        while (i < n){
+            Nodo aux = (Nodo)readyQueue.get(i);
+            int j = i + 1;
+            
+            while (j < n){
+                Nodo aux2 = (Nodo)readyQueue.get(j);
+                if (aux.getInfoPCB().getPriorityFSS()>aux2.getInfoPCB().getPriorityFSS()){
+                    swapNodes(aux, aux2);
+                }
+                j++;
+            }
+            i++;
+        }
+    }
+    
     public int getPriorities(Cola readyQueue){
         Lista priorities = new Lista();
         
@@ -149,7 +317,21 @@ public class Scheduler {
         
         return priorities.count();
     }
-    
+
+    public int getTimesIn(Cola readyQueue){
+        Lista timesIn = new Lista();
+        
+        for (int i = 0; i < readyQueue.getCount(); i++){
+            var aux = (Nodo)readyQueue.get(i);
+            
+            if (!timesIn.contains(aux.getInfoPCB().getTimesIn())){
+                timesIn.add(aux.getInfoPCB().getTimesIn());
+            }
+        }
+        
+        return timesIn.count();
+    }
+       
     public void swapNodes(Nodo first, Nodo next){
         // Intercambio de procesos
         Proceso auxProcess = first.getInfoProceso();
@@ -166,7 +348,6 @@ public class Scheduler {
         first.setInfoDevice(next.getInfoDevice());
         next.setInfoDevice(auxDevice);
     }
-    
     
     
 }

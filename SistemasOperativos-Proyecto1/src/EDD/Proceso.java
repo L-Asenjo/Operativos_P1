@@ -15,8 +15,9 @@ public class Proceso extends Thread {
     private double processingTime = instructions * 0.005; //5ms por cada instruccion
     private int timeSpent = 0;
     private int memorySpace = instructions * 4;
-    private int priority;
-    private int timesIn;
+    private int ioCicles;
+    private int satisfyCicles;
+
 
     public Proceso(int id, String name, String bound, int instructions) {
         this.pcb = new PCB(id, name);
@@ -24,6 +25,16 @@ public class Proceso extends Thread {
         this.instructions = instructions;
     }
 
+    public Proceso(int id, String name, String bound, int instructions, int ioCicles, int satisfyCicles) {
+        this.pcb = new PCB(id, name);
+        this.bound = bound;
+        this.instructions = instructions;
+        this.ioCicles = ioCicles;
+        this.satisfyCicles = satisfyCicles;
+    }
+
+    
+    
     public PCB getPcb() {
         return pcb;
     }
@@ -64,7 +75,7 @@ public class Proceso extends Thread {
     public int getMemorySpace() {
         return memorySpace;
     }
-    
+
     @Override //La clase thread ya tiene una clase run
     public void run(){
         
@@ -81,8 +92,25 @@ public class Proceso extends Thread {
     
     
     
+    
     // proceso.start() ----> Empieza a ejecutar el proceso. Este método hará que se ejecute el run() dentro de la clase
     // ¿Cómo podemos simular la ejecución de un proceso? ¿Qué podemos meter en run?
+
+    public int getIoCicles() {
+        return ioCicles;
+    }
+
+    public void setIoCicles(int ioCicles) {
+        this.ioCicles = ioCicles;
+    }
+
+    public int getSatisfyCicles() {
+        return satisfyCicles;
+    }
+
+    public void setSatisfyCicles(int satisfyCicles) {
+        this.satisfyCicles = satisfyCicles;
+    }
 
     
 }

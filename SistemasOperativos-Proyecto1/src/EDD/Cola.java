@@ -66,6 +66,8 @@ public class Cola {
         return queue;
     }
     
-    
+    public boolean getContains(Object value) {
+        return getQueue().contains(value);
+    }
 
 }
