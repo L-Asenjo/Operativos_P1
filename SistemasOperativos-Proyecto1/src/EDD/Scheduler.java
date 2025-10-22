@@ -26,25 +26,27 @@ public class Scheduler {
     public void RoundRobin (int setQuantum, Cola readyQueue, Dispatcher dispatcher){
         int quantum = setQuantum;
          
-        while(readyQueue.getCount() > 0){
+        while(readyQueue.getCount() > 0){           //if
             var processToActivate = readyQueue.get(0);
             PCB pcbOfActiveProcess = ((Nodo)processToActivate).getInfoPCB();
             
-            // verificar si el proceso ya está activado y si no lo está, activarlo
+            // verificar si el proceso ya está activado y si no lo está, activarlo   
             if (pcbOfActiveProcess.getStatus() != "running"){
                 dispatcher.activate(pcbOfActiveProcess, processList); // ready ---> running
             }
             
             Proceso toRun = dispatcher.getActiveProcess(processList);
             
+            // while
             if (((Nodo)processToActivate).getInfoProceso().getTimeSpent() > quantum){
+                toRun.setTotalTimeSpent(toRun.getTimeSpent());
                 dispatcher.deactivate(toRun);   // running --> ready
                 var aux = readyQueue.get(0);
                 readyQueue.dequeue();
                 readyQueue.enqueue(aux);
             }
             
-            if (toRun.getProcessingTime() == toRun.getTimeSpent()){
+            if (toRun.getProcessingTime() == toRun.getTotalTimeSpent()){
                 dispatcher.deactivate(toRun);
                 readyQueue.dequeue();
             }
@@ -53,15 +55,16 @@ public class Scheduler {
     
     
     public void SPN(Cola readyQueue, Dispatcher dispatcher){
-        while(readyQueue.getCount() > 0){
+        while(readyQueue.getCount() > 0){       //if readyQueue.getCount() > 0
             var processToActivate = readyQueue.get(0);
             PCB pcbOfActiveProcess = ((Nodo)processToActivate).getInfoProceso().getPcb();
             
             // verificar si el proceso ya está activado y si no lo está, activarlo
-            if (pcbOfActiveProcess.getStatus() != "running"){
+            if (pcbOfActiveProcess.getStatus() != "running"){ //
                 dispatcher.activate(pcbOfActiveProcess, processList); // ready ---> running
             }
             
+            // while running
             Proceso toRun = dispatcher.getActiveProcess(processList);
             if (toRun.getProcessingTime() == toRun.getTimeSpent()){
                 dispatcher.deactivate(toRun);
@@ -76,11 +79,12 @@ public class Scheduler {
             var processToActivate = act.get(0);
             PCB pcbOfActiveProcess = ((Nodo)processToActivate).getInfoProceso().getPcb();
                 
-            while (act.getCount() > 0){
+            while (act.getCount() > 0){ //if act.getCount() > 0
                 if (pcbOfActiveProcess.getStatus() != "running"){
                     dispatcher.activate(pcbOfActiveProcess, act.getQueue());
                 }
                 
+                //while running
                 Proceso toRun = dispatcher.getActiveProcess(processList);
                 if (toRun.getProcessingTime() == toRun.getTimeSpent()){
                     dispatcher.deactivate(toRun);

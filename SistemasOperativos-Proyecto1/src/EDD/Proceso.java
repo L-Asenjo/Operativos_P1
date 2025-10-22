@@ -14,6 +14,7 @@ public class Proceso extends Thread {
     private int instructions;
     private double processingTime = instructions * 0.005; //5ms por cada instruccion
     private int timeSpent = 0;
+    private int totalTimeSpent = 0;
     private int memorySpace = instructions * 4;
     private int ioCicles;
     private int satisfyCicles;
@@ -112,6 +113,28 @@ public class Proceso extends Thread {
         this.satisfyCicles = satisfyCicles;
     }
 
+    /**
+     * @param timeSpent the timeSpent to set
+     */
+    public void setTimeSpent(int timeSpent) {
+        this.timeSpent = timeSpent;
+    }
+
+    /**
+     * @return the totalTimeSpent
+     */
+    public int getTotalTimeSpent() {
+        return totalTimeSpent;
+    }
+
+    /**
+     * @param totalTimeSpent the totalTimeSpent to set
+     */
+    public void setTotalTimeSpent(int totalTimeSpent) {
+        this.totalTimeSpent = totalTimeSpent;
+    }
+
+    
     
 }
 

@@ -5,11 +5,26 @@
 package Interfaz;
 
 import EDD.Cola;
-import EDD.Lista;
-import EDD.Nodo;
-import EDD.PCB;
-import EDD.Proceso;
-import EDD.Scheduler;
+import java.awt.Choice;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Font;
+import java.awt.Label;
+import java.awt.Panel;
+import java.awt.ScrollPane;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
+import javax.swing.LayoutStyle;
+import javax.swing.SwingConstants;
+import javax.swing.WindowConstants;
 
 /**
  *
@@ -17,32 +32,18 @@ import EDD.Scheduler;
  */
 public class Interface extends javax.swing.JFrame {
 
-    private Lista processList = new Lista();
-    private Scheduler scheduler;
-    private int memorySpace = 4000;
-    private Cola readyQueue = new Cola();
-    private Cola blockedQueue = new Cola();
-    private Cola suspendedQueue = new Cola();
-    
-    public Cola fillReadyQueue(){
-        //Cola readyQueue = new Cola();
-        for (int i = 0; i < processList.count(); i++){
-            PCB auxProcessPCB = ((Nodo) processList.get(i)).getInfoProceso().getPcb();
-            if (auxProcessPCB.getStatus() == "ready"){
-                readyQueue.enqueue(processList.get(i));
-            } else{
-                i++;
-            }
-        }
-        return readyQueue;
-    }
+    private Cola readyQueue;
+    private Cola suspendedReadyQueue;
+    private Cola suspendedBlockedQueue;
+    private Cola blockedQueue;
+        
+        
     /**
      * Creates new form Interface
+     * @param readyQueue
      */
     public Interface() {
         initComponents();
-        
-        
     }
 
     /**
@@ -54,217 +55,550 @@ public class Interface extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        selection = new javax.swing.JTabbedPane();
-        sim_panel = new java.awt.Panel();
-        panel1 = new java.awt.Panel();
-        round_robin_button = new javax.swing.JButton();
-        generate_process = new javax.swing.JButton();
-        config_panel = new java.awt.Panel();
-        label1 = new java.awt.Label();
-        statistics_panel = new java.awt.Panel();
-        label3 = new java.awt.Label();
-        graphics_panel = new java.awt.Panel();
-        label4 = new java.awt.Label();
+        selection = new JTabbedPane();
+        sim_panel = new Panel();
+        panel1 = new Panel();
+        jLabel6 = new JLabel();
+        jScrollPane1 = new JScrollPane();
+        jTextArea1 = new JTextArea();
+        panel2 = new Panel();
+        jLabel2 = new JLabel();
+        inst_amount = new JSpinner();
+        label6 = new Label();
+        label9 = new Label();
+        label10 = new Label();
+        interrupt_instruction = new JSpinner();
+        process_type = new Choice();
+        create_process = new JButton();
+        jLabel3 = new JLabel();
+        jLabel4 = new JLabel();
+        jLabel7 = new JLabel();
+        scrollPane13 = new ScrollPane();
+        scrollPane6 = new ScrollPane();
+        jLabel8 = new JLabel();
+        scrollPane14 = new ScrollPane();
+        scrollPane7 = new ScrollPane();
+        panel3 = new Panel();
+        jLabel5 = new JLabel();
+        choice2 = new Choice();
+        save_policy1 = new JButton();
+        global_clock = new JLabel();
+        config_panel = new Panel();
+        panel4 = new Panel();
+        jLabel9 = new JLabel();
+        inst_amount1 = new JSpinner();
+        label12 = new Label();
+        create_process1 = new JButton();
+        panel5 = new Panel();
+        jLabel10 = new JLabel();
+        cicle_duration = new Label();
+        label13 = new Label();
+        statistics_panel = new Panel();
+        jPanel1 = new JPanel();
+        jLabel12 = new JLabel();
+        jLabel13 = new JLabel();
+        jLabel14 = new JLabel();
+        jLabel15 = new JLabel();
+        jLabel16 = new JLabel();
+        process_id = new JLabel();
+        process_status = new JLabel();
+        process_name = new JLabel();
+        PC_status = new JLabel();
+        MARS_status = new JLabel();
+        jLabel17 = new JLabel();
+        graphics_panel = new Panel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Simulación de planificación - Luis Asenjo, Michelle García");
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        selection.setBackground(new java.awt.Color(70, 202, 161));
-        selection.setForeground(new java.awt.Color(255, 255, 255));
-        selection.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        selection.setBackground(new Color(70, 202, 161));
+        selection.setForeground(new Color(255, 255, 255));
+        selection.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         selection.setFocusable(false);
 
-        panel1.setBackground(new java.awt.Color(201, 255, 238));
+        panel1.setBackground(new Color(201, 255, 238));
 
-        round_robin_button.setText("Round robin");
-        round_robin_button.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                round_robin_buttonActionPerformed(evt);
-            }
-        });
+        jLabel6.setFont(new Font("Century Gothic", 1, 12)); // NOI18N
+        jLabel6.setHorizontalAlignment(SwingConstants.CENTER);
+        jLabel6.setText("Procesos terminados");
 
-        javax.swing.GroupLayout panel1Layout = new javax.swing.GroupLayout(panel1);
+        jTextArea1.setEditable(false);
+        jTextArea1.setColumns(20);
+        jTextArea1.setRows(5);
+        jScrollPane1.setViewportView(jTextArea1);
+
+        GroupLayout panel1Layout = new GroupLayout(panel1);
         panel1.setLayout(panel1Layout);
-        panel1Layout.setHorizontalGroup(
-            panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        panel1Layout.setHorizontalGroup(panel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(panel1Layout.createSequentialGroup()
-                .addGap(122, 122, 122)
-                .addComponent(round_robin_button)
-                .addContainerGap(149, Short.MAX_VALUE))
+                .addComponent(jLabel6, GroupLayout.PREFERRED_SIZE, 379, GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(panel1Layout.createSequentialGroup()
+                .addGap(19, 19, 19)
+                .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 327, GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        panel1Layout.setVerticalGroup(
-            panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        panel1Layout.setVerticalGroup(panel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(panel1Layout.createSequentialGroup()
-                .addGap(66, 66, 66)
-                .addComponent(round_robin_button)
-                .addContainerGap(71, Short.MAX_VALUE))
+                .addGap(15, 15, 15)
+                .addComponent(jLabel6)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 108, GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(33, Short.MAX_VALUE))
         );
 
-        generate_process.setText("generar procesos");
-        generate_process.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                generate_processActionPerformed(evt);
+        panel2.setBackground(new Color(201, 255, 238));
+
+        jLabel2.setFont(new Font("Century Gothic", 1, 12)); // NOI18N
+        jLabel2.setHorizontalAlignment(SwingConstants.CENTER);
+        jLabel2.setText("Crear Proceso");
+
+        label6.setFont(new Font("Segoe UI", 0, 12)); // NOI18N
+        label6.setForeground(new Color(51, 51, 51));
+        label6.setText("Cant. Instrucciones");
+
+        label9.setFont(new Font("Segoe UI", 0, 12)); // NOI18N
+        label9.setForeground(new Color(51, 51, 51));
+        label9.setText("Tipo");
+
+        label10.setFont(new Font("Segoe UI", 0, 12)); // NOI18N
+        label10.setForeground(new Color(51, 51, 51));
+        label10.setText("Instruccion donde se interrumpe");
+
+        create_process.setBackground(new Color(72, 149, 125));
+        create_process.setForeground(new Color(255, 255, 255));
+        create_process.setText("  Crear Proceso  ");
+        create_process.setBorder(null);
+        create_process.setBorderPainted(false);
+        create_process.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                create_processActionPerformed(evt);
             }
         });
 
-        javax.swing.GroupLayout sim_panelLayout = new javax.swing.GroupLayout(sim_panel);
+        GroupLayout panel2Layout = new GroupLayout(panel2);
+        panel2.setLayout(panel2Layout);
+        panel2Layout.setHorizontalGroup(panel2Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(GroupLayout.Alignment.TRAILING, panel2Layout.createSequentialGroup()
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(create_process, GroupLayout.PREFERRED_SIZE, 94, GroupLayout.PREFERRED_SIZE)
+                .addGap(130, 130, 130))
+            .addGroup(panel2Layout.createSequentialGroup()
+                .addGap(29, 29, 29)
+                .addGroup(panel2Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addComponent(label6, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(label9, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(label10, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 25, Short.MAX_VALUE)
+                .addGroup(panel2Layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+                    .addComponent(interrupt_instruction, GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE)
+                    .addComponent(inst_amount)
+                    .addComponent(process_type, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(36, 36, 36))
+            .addComponent(jLabel2, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        panel2Layout.setVerticalGroup(panel2Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(panel2Layout.createSequentialGroup()
+                .addGap(16, 16, 16)
+                .addComponent(jLabel2)
+                .addGap(22, 22, 22)
+                .addGroup(panel2Layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+                    .addComponent(inst_amount)
+                    .addComponent(label6, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panel2Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addComponent(label9, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(process_type, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panel2Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addComponent(label10, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(interrupt_instruction, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
+                .addComponent(create_process, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)
+                .addGap(20, 20, 20))
+        );
+
+        jLabel3.setFont(new Font("Century Gothic", 1, 12)); // NOI18N
+        jLabel3.setHorizontalAlignment(SwingConstants.CENTER);
+        jLabel3.setText("Cola de Listos");
+
+        jLabel4.setFont(new Font("Century Gothic", 1, 12)); // NOI18N
+        jLabel4.setHorizontalAlignment(SwingConstants.CENTER);
+        jLabel4.setText("Cola de Bloqueados");
+
+        jLabel7.setFont(new Font("Century Gothic", 1, 12)); // NOI18N
+        jLabel7.setHorizontalAlignment(SwingConstants.CENTER);
+        jLabel7.setText("Cola de Suspendidos Listos");
+
+        scrollPane13.setBackground(new Color(245, 245, 245));
+
+        scrollPane6.setBackground(new Color(245, 245, 245));
+
+        jLabel8.setFont(new Font("Century Gothic", 1, 12)); // NOI18N
+        jLabel8.setHorizontalAlignment(SwingConstants.CENTER);
+        jLabel8.setText("Cola de Suspendidos Bloqueados");
+
+        scrollPane14.setBackground(new Color(245, 245, 245));
+
+        scrollPane7.setBackground(new Color(245, 245, 245));
+
+        panel3.setBackground(new Color(201, 255, 238));
+
+        jLabel5.setFont(new Font("Century Gothic", 1, 12)); // NOI18N
+        jLabel5.setHorizontalAlignment(SwingConstants.CENTER);
+        jLabel5.setText("Cambiar politica de planificación");
+
+        save_policy1.setBackground(new Color(72, 149, 125));
+        save_policy1.setForeground(new Color(255, 255, 255));
+        save_policy1.setText("Guardar Cambios");
+        save_policy1.setBorder(null);
+        save_policy1.setBorderPainted(false);
+        save_policy1.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                save_policy1ActionPerformed(evt);
+            }
+        });
+
+        GroupLayout panel3Layout = new GroupLayout(panel3);
+        panel3.setLayout(panel3Layout);
+        panel3Layout.setHorizontalGroup(panel3Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel5, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(panel3Layout.createSequentialGroup()
+                .addGap(113, 113, 113)
+                .addComponent(save_policy1, GroupLayout.PREFERRED_SIZE, 136, GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(GroupLayout.Alignment.TRAILING, panel3Layout.createSequentialGroup()
+                .addContainerGap(52, Short.MAX_VALUE)
+                .addComponent(choice2, GroupLayout.PREFERRED_SIZE, 273, GroupLayout.PREFERRED_SIZE)
+                .addGap(41, 41, 41))
+        );
+        panel3Layout.setVerticalGroup(panel3Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(panel3Layout.createSequentialGroup()
+                .addGap(16, 16, 16)
+                .addComponent(jLabel5)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(choice2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(save_policy1, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(22, Short.MAX_VALUE))
+        );
+
+        global_clock.setFont(new Font("Segoe UI", 0, 48)); // NOI18N
+        global_clock.setText("reloj global");
+
+        GroupLayout sim_panelLayout = new GroupLayout(sim_panel);
         sim_panel.setLayout(sim_panelLayout);
-        sim_panelLayout.setHorizontalGroup(
-            sim_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, sim_panelLayout.createSequentialGroup()
-                .addGap(52, 52, 52)
-                .addComponent(generate_process)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 372, Short.MAX_VALUE)
-                .addComponent(panel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(44, 44, 44))
+        sim_panelLayout.setHorizontalGroup(sim_panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(GroupLayout.Alignment.TRAILING, sim_panelLayout.createSequentialGroup()
+                .addGroup(sim_panelLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                    .addGroup(sim_panelLayout.createSequentialGroup()
+                        .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(scrollPane6, GroupLayout.PREFERRED_SIZE, 793, GroupLayout.PREFERRED_SIZE))
+                    .addGroup(sim_panelLayout.createSequentialGroup()
+                        .addGap(43, 43, 43)
+                        .addGroup(sim_panelLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                            .addComponent(panel1, GroupLayout.PREFERRED_SIZE, 367, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(global_clock, GroupLayout.PREFERRED_SIZE, 185, GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 114, Short.MAX_VALUE)
+                        .addGroup(sim_panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                            .addComponent(scrollPane14, GroupLayout.PREFERRED_SIZE, 793, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(scrollPane13, GroupLayout.PREFERRED_SIZE, 793, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel8, GroupLayout.PREFERRED_SIZE, 793, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel7, GroupLayout.PREFERRED_SIZE, 793, GroupLayout.PREFERRED_SIZE)
+                            .addGroup(sim_panelLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                                .addComponent(jLabel4, GroupLayout.PREFERRED_SIZE, 793, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel3, GroupLayout.PREFERRED_SIZE, 793, GroupLayout.PREFERRED_SIZE))
+                            .addComponent(scrollPane7, GroupLayout.Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 793, GroupLayout.PREFERRED_SIZE))))
+                .addGap(46, 46, 46))
+            .addGroup(sim_panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                .addGroup(sim_panelLayout.createSequentialGroup()
+                    .addGap(41, 41, 41)
+                    .addComponent(panel2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(969, Short.MAX_VALUE)))
+            .addGroup(sim_panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                .addGroup(sim_panelLayout.createSequentialGroup()
+                    .addGap(42, 42, 42)
+                    .addComponent(panel3, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(955, Short.MAX_VALUE)))
         );
-        sim_panelLayout.setVerticalGroup(
-            sim_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        sim_panelLayout.setVerticalGroup(sim_panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(sim_panelLayout.createSequentialGroup()
-                .addGap(48, 48, 48)
-                .addGroup(sim_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(generate_process)
-                    .addComponent(panel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(338, Short.MAX_VALUE))
+                .addGap(42, 42, 42)
+                .addComponent(jLabel3)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(scrollPane6, GroupLayout.PREFERRED_SIZE, 120, GroupLayout.PREFERRED_SIZE)
+                .addGap(29, 29, 29)
+                .addComponent(jLabel4)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(scrollPane7, GroupLayout.PREFERRED_SIZE, 120, GroupLayout.PREFERRED_SIZE)
+                .addGap(25, 25, 25)
+                .addComponent(jLabel7)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(sim_panelLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                    .addGroup(sim_panelLayout.createSequentialGroup()
+                        .addComponent(scrollPane14, GroupLayout.PREFERRED_SIZE, 120, GroupLayout.PREFERRED_SIZE)
+                        .addGap(37, 37, 37)
+                        .addComponent(jLabel8)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(scrollPane13, GroupLayout.PREFERRED_SIZE, 120, GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(80, Short.MAX_VALUE))
+                    .addGroup(sim_panelLayout.createSequentialGroup()
+                        .addComponent(panel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addGap(31, 31, 31)
+                        .addComponent(global_clock, GroupLayout.PREFERRED_SIZE, 54, GroupLayout.PREFERRED_SIZE)
+                        .addGap(72, 72, 72))))
+            .addGroup(sim_panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                .addGroup(sim_panelLayout.createSequentialGroup()
+                    .addGap(38, 38, 38)
+                    .addComponent(panel2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(554, Short.MAX_VALUE)))
+            .addGroup(sim_panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                .addGroup(sim_panelLayout.createSequentialGroup()
+                    .addGap(288, 288, 288)
+                    .addComponent(panel3, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(391, Short.MAX_VALUE)))
         );
+
+        scrollPane13.getAccessibleContext().setAccessibleName("suspended_blocked_queue");
+        scrollPane6.getAccessibleContext().setAccessibleName("blocked_queue");
+        scrollPane14.getAccessibleContext().setAccessibleName("suspended_ready_queue");
 
         selection.addTab("Simulación", sim_panel);
 
-        label1.setText("aaaaaaaaaaaaa");
+        panel4.setBackground(new Color(201, 255, 238));
 
-        javax.swing.GroupLayout config_panelLayout = new javax.swing.GroupLayout(config_panel);
-        config_panel.setLayout(config_panelLayout);
-        config_panelLayout.setHorizontalGroup(
-            config_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(config_panelLayout.createSequentialGroup()
-                .addGap(293, 293, 293)
-                .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(465, Short.MAX_VALUE))
+        jLabel9.setFont(new Font("Century Gothic", 1, 12)); // NOI18N
+        jLabel9.setHorizontalAlignment(SwingConstants.CENTER);
+        jLabel9.setText("Duración de ciclos de ejecución");
+
+        label12.setFont(new Font("Segoe UI", 0, 12)); // NOI18N
+        label12.setForeground(new Color(51, 51, 51));
+        label12.setText("segundos");
+
+        create_process1.setBackground(new Color(72, 149, 125));
+        create_process1.setForeground(new Color(255, 255, 255));
+        create_process1.setText("  Guardar cambios  ");
+        create_process1.setBorder(null);
+        create_process1.setBorderPainted(false);
+        create_process1.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                create_process1ActionPerformed(evt);
+            }
+        });
+
+        GroupLayout panel4Layout = new GroupLayout(panel4);
+        panel4.setLayout(panel4Layout);
+        panel4Layout.setHorizontalGroup(panel4Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel9, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(GroupLayout.Alignment.TRAILING, panel4Layout.createSequentialGroup()
+                .addContainerGap(20, Short.MAX_VALUE)
+                .addGroup(panel4Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addGroup(GroupLayout.Alignment.TRAILING, panel4Layout.createSequentialGroup()
+                        .addGroup(panel4Layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                            .addComponent(label12, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(inst_amount1, GroupLayout.PREFERRED_SIZE, 271, GroupLayout.PREFERRED_SIZE))
+                        .addGap(36, 36, 36))
+                    .addGroup(GroupLayout.Alignment.TRAILING, panel4Layout.createSequentialGroup()
+                        .addComponent(create_process1)
+                        .addGap(111, 111, 111))))
         );
-        config_panelLayout.setVerticalGroup(
-            config_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        panel4Layout.setVerticalGroup(panel4Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(panel4Layout.createSequentialGroup()
+                .addGap(16, 16, 16)
+                .addComponent(jLabel9)
+                .addGap(22, 22, 22)
+                .addComponent(inst_amount1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(label12, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 22, Short.MAX_VALUE)
+                .addComponent(create_process1, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)
+                .addGap(24, 24, 24))
+        );
+
+        panel5.setBackground(new Color(93, 154, 135));
+
+        jLabel10.setFont(new Font("Century Gothic", 1, 12)); // NOI18N
+        jLabel10.setHorizontalAlignment(SwingConstants.CENTER);
+        jLabel10.setText("Duración actual del ciclo:");
+
+        cicle_duration.setFont(new Font("Segoe UI", 0, 48)); // NOI18N
+        cicle_duration.setForeground(new Color(51, 51, 51));
+        cicle_duration.setText("segundos");
+
+        label13.setFont(new Font("Segoe UI", 0, 12)); // NOI18N
+        label13.setForeground(new Color(51, 51, 51));
+        label13.setText("segundos");
+
+        GroupLayout panel5Layout = new GroupLayout(panel5);
+        panel5.setLayout(panel5Layout);
+        panel5Layout.setHorizontalGroup(panel5Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel10, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(GroupLayout.Alignment.TRAILING, panel5Layout.createSequentialGroup()
+                .addContainerGap(44, Short.MAX_VALUE)
+                .addGroup(panel5Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addGroup(GroupLayout.Alignment.TRAILING, panel5Layout.createSequentialGroup()
+                        .addComponent(cicle_duration, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addGap(38, 38, 38))
+                    .addGroup(GroupLayout.Alignment.TRAILING, panel5Layout.createSequentialGroup()
+                        .addComponent(label13, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addGap(115, 115, 115))))
+        );
+        panel5Layout.setVerticalGroup(panel5Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(panel5Layout.createSequentialGroup()
+                .addGap(16, 16, 16)
+                .addComponent(jLabel10)
+                .addGap(21, 21, 21)
+                .addComponent(cicle_duration, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(label13, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(27, Short.MAX_VALUE))
+        );
+
+        GroupLayout config_panelLayout = new GroupLayout(config_panel);
+        config_panel.setLayout(config_panelLayout);
+        config_panelLayout.setHorizontalGroup(config_panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(config_panelLayout.createSequentialGroup()
-                .addGap(134, 134, 134)
-                .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(348, Short.MAX_VALUE))
+                .addGap(50, 50, 50)
+                .addComponent(panel4, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addGap(32, 32, 32)
+                .addComponent(panel5, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(665, Short.MAX_VALUE))
+        );
+        config_panelLayout.setVerticalGroup(config_panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(config_panelLayout.createSequentialGroup()
+                .addGap(40, 40, 40)
+                .addGroup(config_panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addComponent(panel5, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(panel4, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(579, Short.MAX_VALUE))
         );
 
         selection.addTab("Configuración", config_panel);
 
-        label3.setText("label3");
+        jLabel12.setText("ID");
 
-        javax.swing.GroupLayout statistics_panelLayout = new javax.swing.GroupLayout(statistics_panel);
-        statistics_panel.setLayout(statistics_panelLayout);
-        statistics_panelLayout.setHorizontalGroup(
-            statistics_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 955, Short.MAX_VALUE)
-            .addGroup(statistics_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(statistics_panelLayout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
-                    .addComponent(label3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 0, Short.MAX_VALUE)))
+        jLabel13.setText("Status");
+
+        jLabel14.setText("Nombre");
+
+        jLabel15.setText("Estado del PC");
+
+        jLabel16.setText("Estado del MAR");
+
+        process_id.setText("ID");
+
+        process_status.setText("Status");
+
+        process_name.setText("Nombre");
+
+        PC_status.setText("Estado del PC");
+
+        MARS_status.setText("Estado del MAR");
+
+        jLabel17.setText("Generales");
+        jLabel17.setToolTipText("");
+
+        GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(37, 37, 37)
+                .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel17)
+                    .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addComponent(jLabel12)
+                        .addComponent(jLabel13)
+                        .addComponent(jLabel14)
+                        .addComponent(jLabel15)
+                        .addComponent(jLabel16)))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addComponent(process_id)
+                    .addComponent(process_status)
+                    .addComponent(process_name)
+                    .addComponent(PC_status)
+                    .addComponent(MARS_status))
+                .addContainerGap())
         );
-        statistics_panelLayout.setVerticalGroup(
-            statistics_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 546, Short.MAX_VALUE)
-            .addGroup(statistics_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(statistics_panelLayout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
-                    .addComponent(label3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 0, Short.MAX_VALUE)))
+        jPanel1Layout.setVerticalGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(28, 28, 28)
+                .addComponent(jLabel17)
+                .addGap(29, 29, 29)
+                .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel12)
+                        .addGap(22, 22, 22)
+                        .addComponent(jLabel13)
+                        .addGap(22, 22, 22)
+                        .addComponent(jLabel14)
+                        .addGap(22, 22, 22)
+                        .addComponent(jLabel15)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel16))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(process_id)
+                        .addGap(22, 22, 22)
+                        .addComponent(process_status)
+                        .addGap(22, 22, 22)
+                        .addComponent(process_name)
+                        .addGap(22, 22, 22)
+                        .addComponent(PC_status)
+                        .addGap(18, 18, 18)
+                        .addComponent(MARS_status)))
+                .addContainerGap(32, Short.MAX_VALUE))
+        );
+
+        GroupLayout statistics_panelLayout = new GroupLayout(statistics_panel);
+        statistics_panel.setLayout(statistics_panelLayout);
+        statistics_panelLayout.setHorizontalGroup(statistics_panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(statistics_panelLayout.createSequentialGroup()
+                .addGap(30, 30, 30)
+                .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(1080, Short.MAX_VALUE))
+        );
+        statistics_panelLayout.setVerticalGroup(statistics_panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(statistics_panelLayout.createSequentialGroup()
+                .addGap(27, 27, 27)
+                .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(501, Short.MAX_VALUE))
         );
 
         selection.addTab("Estadística", statistics_panel);
 
-        label4.setText("label4");
-
-        javax.swing.GroupLayout graphics_panelLayout = new javax.swing.GroupLayout(graphics_panel);
+        GroupLayout graphics_panelLayout = new GroupLayout(graphics_panel);
         graphics_panel.setLayout(graphics_panelLayout);
-        graphics_panelLayout.setHorizontalGroup(
-            graphics_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 955, Short.MAX_VALUE)
-            .addGroup(graphics_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(graphics_panelLayout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
-                    .addComponent(label4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 0, Short.MAX_VALUE)))
+        graphics_panelLayout.setHorizontalGroup(graphics_panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGap(0, 1363, Short.MAX_VALUE)
         );
-        graphics_panelLayout.setVerticalGroup(
-            graphics_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 546, Short.MAX_VALUE)
-            .addGroup(graphics_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(graphics_panelLayout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
-                    .addComponent(label4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 0, Short.MAX_VALUE)))
+        graphics_panelLayout.setVerticalGroup(graphics_panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGap(0, 797, Short.MAX_VALUE)
         );
 
         selection.addTab("Gráficos", graphics_panel);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        GroupLayout layout = new GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        layout.setHorizontalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addComponent(selection)
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        layout.setVerticalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addComponent(selection)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void round_robin_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_round_robin_buttonActionPerformed
+    private void create_processActionPerformed(ActionEvent evt) {//GEN-FIRST:event_create_processActionPerformed
         // TODO add your handling code here:
-        
-    }//GEN-LAST:event_round_robin_buttonActionPerformed
+    }//GEN-LAST:event_create_processActionPerformed
 
-    private void generate_processActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generate_processActionPerformed
-        
-         // 1) Proceso CPU-bound corto (ejemplo: 100 instrucciones)
-        Proceso p1 = new Proceso(1, "P1_init", "CPU", 100);
-        p1.getPcb().setStatus("ready"); // marcar como listo para ejecución
+    private void save_policy1ActionPerformed(ActionEvent evt) {//GEN-FIRST:event_save_policy1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_save_policy1ActionPerformed
 
-        // 2) Proceso I/O-bound (con ciclos de I/O)
-        Proceso p2 = new Proceso(2, "P2_io", "IO", 200); // ioCicles=5, satisfyCicles=2
-        p2.getPcb().setStatus("blocked"); // simula que está esperando I/O
-
-        // 3) Proceso corto/rápido
-        Proceso p3 = new Proceso(3, "P3_short", "CPU", 20);
-        p3.getPcb().setStatus("ready");
-
-        // Encapsular cada Proceso en un Nodo (constructores definidos en Nodo)
-        Nodo n1 = new Nodo(p1);
-        Nodo n2 = new Nodo(p2);
-        Nodo n3 = new Nodo(p3);
-        
-        processList.add(n1);
-        processList.add(n2);
-        processList.add(n3);
-        
-        this.scheduler = new Scheduler(processList, memorySpace);
-        
-        /*
-        System.out.println("Procesos creados: " + processList.count());
-        for (int i = 0; i < processList.count(); i++) {
-            Nodo node = (Nodo) processList.get(i);
-            Proceso proc = node.getInfoProceso();
-            PCB pcb = proc.getPcb();
-
-            int pid = pcb.getId();
-            String status = pcb.getStatus();
-            String bound = proc.getBound();
-            int instr = proc.getInstructions();
-            double processingTimeMs = instr * 0.005; // cálculo local (5 ms por instrucción = 0.005 ms por instrucción)
-            int memoryKb = instr * 4; // cálculo local (4 KB por instrucción, si esa es la convención)
-            boolean needsIo = proc.getIoCicles() > 0;
-
-            System.out.printf("PID=%d | bound=%s | status=%s | instr=%d | procTime=%.3f ms | mem=%d KB | io=%b%n",
-                    pid, bound, status, instr, processingTimeMs, memoryKb, needsIo);
-        }
-        */
-    }//GEN-LAST:event_generate_processActionPerformed
+    private void create_process1ActionPerformed(ActionEvent evt) {//GEN-FIRST:event_create_process1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_create_process1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -292,6 +626,7 @@ public class Interface extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(Interface.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
+        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -302,16 +637,117 @@ public class Interface extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private java.awt.Panel config_panel;
-    private javax.swing.JButton generate_process;
-    private java.awt.Panel graphics_panel;
-    private java.awt.Label label1;
-    private java.awt.Label label3;
-    private java.awt.Label label4;
-    private java.awt.Panel panel1;
-    private javax.swing.JButton round_robin_button;
-    private javax.swing.JTabbedPane selection;
-    private java.awt.Panel sim_panel;
-    private java.awt.Panel statistics_panel;
+    private JLabel MARS_status;
+    private JLabel PC_status;
+    private Choice choice2;
+    private Label cicle_duration;
+    private Label cicle_duration1;
+    private Panel config_panel;
+    private JButton create_process;
+    private JButton create_process1;
+    private JLabel global_clock;
+    private Panel graphics_panel;
+    private JSpinner inst_amount;
+    private JSpinner inst_amount1;
+    private JSpinner interrupt_instruction;
+    private JLabel jLabel10;
+    private JLabel jLabel11;
+    private JLabel jLabel12;
+    private JLabel jLabel13;
+    private JLabel jLabel14;
+    private JLabel jLabel15;
+    private JLabel jLabel16;
+    private JLabel jLabel17;
+    private JLabel jLabel2;
+    private JLabel jLabel3;
+    private JLabel jLabel4;
+    private JLabel jLabel5;
+    private JLabel jLabel6;
+    private JLabel jLabel7;
+    private JLabel jLabel8;
+    private JLabel jLabel9;
+    private JPanel jPanel1;
+    private JScrollPane jScrollPane1;
+    private JTextArea jTextArea1;
+    private Label label10;
+    private Label label12;
+    private Label label13;
+    private Label label14;
+    private Label label6;
+    private Label label9;
+    private Panel panel1;
+    private Panel panel2;
+    private Panel panel3;
+    private Panel panel4;
+    private Panel panel5;
+    private Panel panel6;
+    private JLabel process_id;
+    private JLabel process_name;
+    private JLabel process_status;
+    private Choice process_type;
+    private JButton save_policy1;
+    private ScrollPane scrollPane13;
+    private ScrollPane scrollPane14;
+    private ScrollPane scrollPane6;
+    private ScrollPane scrollPane7;
+    private JTabbedPane selection;
+    private Panel sim_panel;
+    private Panel statistics_panel;
     // End of variables declaration//GEN-END:variables
+
+    /**
+     * @return the readyQueue
+     */
+    public Cola getReadyQueue() {
+        return readyQueue;
+    }
+
+    /**
+     * @param readyQueue the readyQueue to set
+     */
+    public void setReadyQueue(Cola readyQueue) {
+        this.readyQueue = readyQueue;
+    }
+
+    /**
+     * @return the suspendedReadyQueue
+     */
+    public Cola getSuspendedReadyQueue() {
+        return suspendedReadyQueue;
+    }
+
+    /**
+     * @param suspendedReadyQueue the suspendedReadyQueue to set
+     */
+    public void setSuspendedReadyQueue(Cola suspendedReadyQueue) {
+        this.suspendedReadyQueue = suspendedReadyQueue;
+    }
+
+    /**
+     * @return the suspendedBlockedQueue
+     */
+    public Cola getSuspendedBlockedQueue() {
+        return suspendedBlockedQueue;
+    }
+
+    /**
+     * @param suspendedBlockedQueue the suspendedBlockedQueue to set
+     */
+    public void setSuspendedBlockedQueue(Cola suspendedBlockedQueue) {
+        this.suspendedBlockedQueue = suspendedBlockedQueue;
+    }
+
+    /**
+     * @return the blockedQueue
+     */
+    public Cola getBlockedQueue() {
+        return blockedQueue;
+    }
+
+    /**
+     * @param blockedQueue the blockedQueue to set
+     */
+    public void setBlockedQueue(Cola blockedQueue) {
+        this.blockedQueue = blockedQueue;
+    }
 }
