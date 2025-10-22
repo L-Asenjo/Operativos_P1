@@ -14,11 +14,13 @@ public class Scheduler {
     
     private Lista processList; //Lista en la cual se guardan todos los procesos a ejecutar.
     private int memoryAvaiable;
+    private Lista deviceTable = new Lista();
                                      //Se agregan desde la interfaz
 
-    public Scheduler(Lista processList, int memorySpace) {
+    public Scheduler(Lista processList, int memorySpace, Lista deviceTable) {
         this.processList = processList;
         this.memoryAvaiable = memorySpace;
+        this.deviceTable = deviceTable;
     }
     
     
@@ -26,7 +28,7 @@ public class Scheduler {
     public void RoundRobin (int setQuantum, Cola readyQueue, Dispatcher dispatcher){
         int quantum = setQuantum;
          
-        while(readyQueue.getCount() > 0){
+        if (readyQueue.getCount() > 0){
             var processToActivate = readyQueue.get(0);
             PCB pcbOfActiveProcess = ((Nodo)processToActivate).getInfoProceso().getPcb();
             
@@ -37,23 +39,30 @@ public class Scheduler {
             
             Proceso toRun = dispatcher.getActiveProcess(processList);
             
-            if (((Nodo)processToActivate).getInfoProceso().getTimeSpent() > quantum){
-                dispatcher.deactivate(toRun);   // running --> ready
-                var aux = readyQueue.get(0);
-                readyQueue.dequeue();
-                readyQueue.enqueue(aux);
-            }
+            while(toRun.getPcb().getStatus() == "running") {
+                if (toRun.getTimeSpent() > quantum){
+                    dispatcher.deactivate(toRun);   // running --> ready
+                    var aux = readyQueue.get(0);
+                    readyQueue.dequeue();
+                    readyQueue.enqueue(aux);
+                }
             
-            if (toRun.getProcessingTime() == toRun.getTimeSpent()){
-                dispatcher.deactivate(toRun);
-                readyQueue.dequeue();
+                if (toRun.getPcb().getPc()-1 == toRun.getInterruptAt()){
+                    toRun.getPcb().setStatus("blocked");
+                    toRun.interrupt();
+                }                
+                
+                if (toRun.getProcessingTime() == toRun.getTimeSpent()){
+                    dispatcher.deactivate(toRun);
+                    readyQueue.dequeue();
+                }
             }
         }
     }
     
     
     public void SPN(Cola readyQueue, Dispatcher dispatcher){
-        while(readyQueue.getCount() > 0){
+        if (readyQueue.getCount() > 0){
             var processToActivate = readyQueue.get(0);
             PCB pcbOfActiveProcess = ((Nodo)processToActivate).getInfoProceso().getPcb();
             
@@ -63,9 +72,16 @@ public class Scheduler {
             }
             
             Proceso toRun = dispatcher.getActiveProcess(processList);
-            if (toRun.getProcessingTime() == toRun.getTimeSpent()){
-                dispatcher.deactivate(toRun);
-                readyQueue.dequeue();
+            
+            while(toRun.getPcb().getStatus() == "running"){
+                if (toRun.getProcessingTime() == toRun.getTimeSpent()){
+                    dispatcher.deactivate(toRun);
+                    readyQueue.dequeue();
+                }
+                if (toRun.getPcb().getPc()-1 == toRun.getInterruptAt()){
+                    toRun.getPcb().setStatus("blocked");
+                    toRun.interrupt();
+                }
             }
         }
     }
@@ -76,15 +92,21 @@ public class Scheduler {
             var processToActivate = act.get(0);
             PCB pcbOfActiveProcess = ((Nodo)processToActivate).getInfoProceso().getPcb();
                 
-            while (act.getCount() > 0){
+            if (act.getCount() > 0){
                 if (pcbOfActiveProcess.getStatus() != "running"){
                     dispatcher.activate(pcbOfActiveProcess, act.getQueue());
                 }
                 
                 Proceso toRun = dispatcher.getActiveProcess(processList);
-                if (toRun.getProcessingTime() == toRun.getTimeSpent()){
+                while(toRun.getPcb().getStatus() == "running") {
+                    if (toRun.getProcessingTime() == toRun.getTimeSpent()){
                     dispatcher.deactivate(toRun);
                     act.dequeue();
+                    }
+                    if (toRun.getPcb().getPc()-1 == toRun.getInterruptAt()){
+                        toRun.getPcb().setStatus("blocked");
+                        toRun.interrupt();
+                    }
                 }
             }
         }
@@ -111,6 +133,18 @@ public class Scheduler {
         while (toRun.getPcb().getStatus() == "running"){
             if (toRun.getTimeSpent() > quantum || toRun.getProcessingTime() == toRun.getTimeSpent()){
                 dispatcher.deactivate(toRun);   // running --> ready
+            }
+            if (toRun.getPcb().getPc()-1 == toRun.getInterruptAt()){
+                toRun.getPcb().setStatus("blocked");
+                try {
+                    toRun.sleep(toRun.getIoCicles());
+                    accessDevice(toRun, dispatcher);
+                } 
+                catch(InterruptedException e) {
+                     // this part is executed when an exception (in this example InterruptedException) occurs
+                     System.out.println("en catch" + e);
+                }
+                
             }
         }
         if (toRun.getProcessingTime() == toRun.getTimeSpent()) {
@@ -139,12 +173,17 @@ public class Scheduler {
                 if (toRun.getTimeSpent() > quantum || toRun.getProcessingTime() == toRun.getTimeSpent()){
                     dispatcher.deactivate(toRun);   // running --> ready
                 }
+                if (toRun.getPcb().getPc()-1 == toRun.getInterruptAt()){
+                    toRun.getPcb().setStatus("blocked");
+                    toRun.interrupt();
                 }
-                if (toRun.getProcessingTime() == toRun.getTimeSpent()) {
-                    /*se termina el proceso*/
-                } else {
-                    readyQueue.enqueue(toRun);
-                }
+            }
+            
+            if (toRun.getProcessingTime() == toRun.getTimeSpent()) {
+                /*se termina el proceso*/
+            } else {
+                readyQueue.enqueue(toRun);
+            }
         }
     }
     
@@ -159,12 +198,16 @@ public class Scheduler {
                 if (toRun.getProcessingTime() == toRun.getTimeSpent()){
                     dispatcher.deactivate(toRun);   // running --> ready
                 }
+                if (toRun.getPcb().getPc()-1 == toRun.getInterruptAt()){
+                    toRun.getPcb().setStatus("blocked");
+                    toRun.interrupt();
                 }
-                if (toRun.getProcessingTime() == toRun.getTimeSpent()) {
-                    /*se termina el proceso*/
-                } else {
-                    readyQueue.enqueue(toRun);
-                }
+            }
+            if (toRun.getProcessingTime() == toRun.getTimeSpent()) {
+                /*se termina el proceso*/
+            } else {
+                readyQueue.enqueue(toRun);
+            }
         }
     }
     
@@ -349,5 +392,23 @@ public class Scheduler {
         next.setInfoDevice(auxDevice);
     }
     
+    public void accessDevice(Proceso blockedProcess, Dispatcher dispatcher){
+        int i = 0;
+        while (i < deviceTable.count()){
+            if (blockedProcess.getDeviceToUse() == ((Nodo)deviceTable.get(i)).getInfoDevice().getId()){
+                ((Nodo)deviceTable.get(i)).getInfoDevice().getSemaf().semWait(blockedProcess.getPcb());
+                break;
+            }
+        }
+        try {
+            blockedProcess.sleep(blockedProcess.getSatisfyCicles());
+            ((Nodo)deviceTable.get(i)).getInfoDevice().getSemaf().semSignal();
+            dispatcher.deactivate(blockedProcess);
+        } 
+        catch(InterruptedException e) {
+             // this part is executed when an exception (in this example InterruptedException) occurs
+             System.out.println("en catch" + e);
+        }
+    }
     
 }

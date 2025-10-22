@@ -26,16 +26,18 @@ public class Semaforo {
     }
     
     public boolean isAvailable(){
-        return getMutex()>0;
+        return getMutex()==0;
     }
     
-    public void semWait(Object j){
+    public boolean semWait(Object j){
         int update = getMutex() - 1;
         setMutex(update);
         
         if (!isAvailable()){
             queue.enqueue(j);
+            return false;
         }
+        return true;
     }
     
     public Object semSignal(){

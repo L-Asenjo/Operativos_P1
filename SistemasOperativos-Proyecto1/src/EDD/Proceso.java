@@ -17,6 +17,8 @@ public class Proceso extends Thread {
     private int memorySpace = instructions * 4;
     private int ioCicles;
     private int satisfyCicles;
+    private int interruptAt;
+    private int deviceToUse;
 
 
     public Proceso(int id, String name, String bound, int instructions) {
@@ -25,12 +27,14 @@ public class Proceso extends Thread {
         this.instructions = instructions;
     }
 
-    public Proceso(int id, String name, String bound, int instructions, int ioCicles, int satisfyCicles) {
+    public Proceso(int id, String name, String bound, int instructions, int ioCicles, int satisfyCicles, int deviceToUse) {
         this.pcb = new PCB(id, name);
         this.bound = bound;
         this.instructions = instructions;
         this.ioCicles = ioCicles;
         this.satisfyCicles = satisfyCicles;
+        this.interruptAt = (int) (instructions/2);
+        this.deviceToUse = deviceToUse;
     }
 
     
@@ -81,8 +85,10 @@ public class Proceso extends Thread {
         
         while (getTimeSpent() < getProcessingTime()){
             timeSpent++;
+            pcb.setPc(pcb.getPc()+1);
+            pcb.setMar(pcb.getMar()+1);
             try {
-                    Thread.sleep(1); // pausa de 1 ms
+                    Thread.sleep(1000); // pausa de 1 s
                 } catch (InterruptedException e) {
                     System.out.println("Hilo interrumpido");
                     break; // salir del bucle si se interrumpe
@@ -112,6 +118,15 @@ public class Proceso extends Thread {
         this.satisfyCicles = satisfyCicles;
     }
 
+    public int getInterruptAt() {
+        return interruptAt;
+    }
+
+    public int getDeviceToUse() {
+        return deviceToUse;
+    }
+    
+    
     
 }
 
