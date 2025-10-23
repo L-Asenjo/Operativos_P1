@@ -81,8 +81,10 @@ public class Interface extends javax.swing.JFrame {
         panel3 = new Panel();
         jLabel5 = new JLabel();
         choice2 = new Choice();
-        save_policy1 = new JButton();
+        save_policy = new JButton();
         global_clock = new JLabel();
+        generate_processes = new JButton();
+        global_clock1 = new JLabel();
         config_panel = new Panel();
         panel4 = new Panel();
         jLabel9 = new JLabel();
@@ -247,14 +249,14 @@ public class Interface extends javax.swing.JFrame {
         jLabel5.setHorizontalAlignment(SwingConstants.CENTER);
         jLabel5.setText("Cambiar politica de planificación");
 
-        save_policy1.setBackground(new Color(72, 149, 125));
-        save_policy1.setForeground(new Color(255, 255, 255));
-        save_policy1.setText("Guardar Cambios");
-        save_policy1.setBorder(null);
-        save_policy1.setBorderPainted(false);
-        save_policy1.addActionListener(new ActionListener() {
+        save_policy.setBackground(new Color(72, 149, 125));
+        save_policy.setForeground(new Color(255, 255, 255));
+        save_policy.setText("Guardar Cambios");
+        save_policy.setBorder(null);
+        save_policy.setBorderPainted(false);
+        save_policy.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                save_policy1ActionPerformed(evt);
+                save_policyActionPerformed(evt);
             }
         });
 
@@ -264,7 +266,7 @@ public class Interface extends javax.swing.JFrame {
             .addComponent(jLabel5, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(panel3Layout.createSequentialGroup()
                 .addGap(113, 113, 113)
-                .addComponent(save_policy1, GroupLayout.PREFERRED_SIZE, 136, GroupLayout.PREFERRED_SIZE)
+                .addComponent(save_policy, GroupLayout.PREFERRED_SIZE, 136, GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(GroupLayout.Alignment.TRAILING, panel3Layout.createSequentialGroup()
                 .addContainerGap(52, Short.MAX_VALUE)
@@ -278,12 +280,26 @@ public class Interface extends javax.swing.JFrame {
                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(choice2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(save_policy1, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)
+                .addComponent(save_policy, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(22, Short.MAX_VALUE))
         );
 
         global_clock.setFont(new Font("Segoe UI", 0, 48)); // NOI18N
-        global_clock.setText("reloj global");
+        global_clock.setText("100");
+
+        generate_processes.setBackground(new Color(72, 149, 125));
+        generate_processes.setForeground(new Color(255, 255, 255));
+        generate_processes.setText("  Crear 20 procesos  ");
+        generate_processes.setBorder(null);
+        generate_processes.setBorderPainted(false);
+        generate_processes.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                generate_processesActionPerformed(evt);
+            }
+        });
+
+        global_clock1.setFont(new Font("Segoe UI", 0, 24)); // NOI18N
+        global_clock1.setText("segundos");
 
         GroupLayout sim_panelLayout = new GroupLayout(sim_panel);
         sim_panel.setLayout(sim_panelLayout);
@@ -293,11 +309,18 @@ public class Interface extends javax.swing.JFrame {
                     .addGroup(sim_panelLayout.createSequentialGroup()
                         .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(scrollPane6, GroupLayout.PREFERRED_SIZE, 793, GroupLayout.PREFERRED_SIZE))
-                    .addGroup(sim_panelLayout.createSequentialGroup()
+                    .addGroup(GroupLayout.Alignment.LEADING, sim_panelLayout.createSequentialGroup()
                         .addGap(43, 43, 43)
-                        .addGroup(sim_panelLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                            .addComponent(panel1, GroupLayout.PREFERRED_SIZE, 367, GroupLayout.PREFERRED_SIZE)
-                            .addComponent(global_clock, GroupLayout.PREFERRED_SIZE, 185, GroupLayout.PREFERRED_SIZE))
+                        .addGroup(sim_panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                            .addGroup(sim_panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+                                .addComponent(panel1, GroupLayout.PREFERRED_SIZE, 367, GroupLayout.PREFERRED_SIZE)
+                                .addGroup(sim_panelLayout.createSequentialGroup()
+                                    .addComponent(global_clock, GroupLayout.PREFERRED_SIZE, 82, GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(global_clock1, GroupLayout.PREFERRED_SIZE, 116, GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(generate_processes, GroupLayout.PREFERRED_SIZE, 136, GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(panel3, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 114, Short.MAX_VALUE)
                         .addGroup(sim_panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                             .addComponent(scrollPane14, GroupLayout.PREFERRED_SIZE, 793, GroupLayout.PREFERRED_SIZE)
@@ -314,11 +337,6 @@ public class Interface extends javax.swing.JFrame {
                     .addGap(41, 41, 41)
                     .addComponent(panel2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addContainerGap(969, Short.MAX_VALUE)))
-            .addGroup(sim_panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(sim_panelLayout.createSequentialGroup()
-                    .addGap(42, 42, 42)
-                    .addComponent(panel3, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(955, Short.MAX_VALUE)))
         );
         sim_panelLayout.setVerticalGroup(sim_panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(sim_panelLayout.createSequentialGroup()
@@ -329,33 +347,37 @@ public class Interface extends javax.swing.JFrame {
                 .addGap(29, 29, 29)
                 .addComponent(jLabel4)
                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scrollPane7, GroupLayout.PREFERRED_SIZE, 120, GroupLayout.PREFERRED_SIZE)
-                .addGap(25, 25, 25)
-                .addComponent(jLabel7)
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(sim_panelLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
                     .addGroup(sim_panelLayout.createSequentialGroup()
+                        .addComponent(scrollPane7, GroupLayout.PREFERRED_SIZE, 120, GroupLayout.PREFERRED_SIZE)
+                        .addGap(25, 25, 25)
+                        .addComponent(jLabel7))
+                    .addComponent(panel3, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(sim_panelLayout.createParallelGroup(GroupLayout.Alignment.TRAILING, false)
+                    .addGroup(GroupLayout.Alignment.LEADING, sim_panelLayout.createSequentialGroup()
                         .addComponent(scrollPane14, GroupLayout.PREFERRED_SIZE, 120, GroupLayout.PREFERRED_SIZE)
                         .addGap(37, 37, 37)
                         .addComponent(jLabel8)
                         .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(scrollPane13, GroupLayout.PREFERRED_SIZE, 120, GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(80, Short.MAX_VALUE))
-                    .addGroup(sim_panelLayout.createSequentialGroup()
-                        .addComponent(panel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(scrollPane13, GroupLayout.PREFERRED_SIZE, 120, GroupLayout.PREFERRED_SIZE))
+                    .addGroup(GroupLayout.Alignment.LEADING, sim_panelLayout.createSequentialGroup()
                         .addGap(31, 31, 31)
-                        .addComponent(global_clock, GroupLayout.PREFERRED_SIZE, 54, GroupLayout.PREFERRED_SIZE)
-                        .addGap(72, 72, 72))))
+                        .addComponent(panel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(sim_panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                            .addGroup(GroupLayout.Alignment.TRAILING, sim_panelLayout.createSequentialGroup()
+                                .addComponent(global_clock, GroupLayout.PREFERRED_SIZE, 54, GroupLayout.PREFERRED_SIZE))
+                            .addGroup(sim_panelLayout.createSequentialGroup()
+                                .addGroup(sim_panelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                    .addComponent(global_clock1, GroupLayout.PREFERRED_SIZE, 54, GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(generate_processes, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE))))))
+                .addContainerGap(80, Short.MAX_VALUE))
             .addGroup(sim_panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                 .addGroup(sim_panelLayout.createSequentialGroup()
                     .addGap(38, 38, 38)
                     .addComponent(panel2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addContainerGap(554, Short.MAX_VALUE)))
-            .addGroup(sim_panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(sim_panelLayout.createSequentialGroup()
-                    .addGap(288, 288, 288)
-                    .addComponent(panel3, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(391, Short.MAX_VALUE)))
         );
 
         scrollPane13.getAccessibleContext().setAccessibleName("suspended_blocked_queue");
@@ -592,13 +614,17 @@ public class Interface extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_create_processActionPerformed
 
-    private void save_policy1ActionPerformed(ActionEvent evt) {//GEN-FIRST:event_save_policy1ActionPerformed
+    private void save_policyActionPerformed(ActionEvent evt) {//GEN-FIRST:event_save_policyActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_save_policy1ActionPerformed
+    }//GEN-LAST:event_save_policyActionPerformed
 
     private void create_process1ActionPerformed(ActionEvent evt) {//GEN-FIRST:event_create_process1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_create_process1ActionPerformed
+
+    private void generate_processesActionPerformed(ActionEvent evt) {//GEN-FIRST:event_generate_processesActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_generate_processesActionPerformed
 
     /**
      * @param args the command line arguments
@@ -641,17 +667,17 @@ public class Interface extends javax.swing.JFrame {
     private JLabel PC_status;
     private Choice choice2;
     private Label cicle_duration;
-    private Label cicle_duration1;
     private Panel config_panel;
     private JButton create_process;
     private JButton create_process1;
+    private JButton generate_processes;
     private JLabel global_clock;
+    private JLabel global_clock1;
     private Panel graphics_panel;
     private JSpinner inst_amount;
     private JSpinner inst_amount1;
     private JSpinner interrupt_instruction;
     private JLabel jLabel10;
-    private JLabel jLabel11;
     private JLabel jLabel12;
     private JLabel jLabel13;
     private JLabel jLabel14;
@@ -672,7 +698,6 @@ public class Interface extends javax.swing.JFrame {
     private Label label10;
     private Label label12;
     private Label label13;
-    private Label label14;
     private Label label6;
     private Label label9;
     private Panel panel1;
@@ -680,12 +705,11 @@ public class Interface extends javax.swing.JFrame {
     private Panel panel3;
     private Panel panel4;
     private Panel panel5;
-    private Panel panel6;
     private JLabel process_id;
     private JLabel process_name;
     private JLabel process_status;
     private Choice process_type;
-    private JButton save_policy1;
+    private JButton save_policy;
     private ScrollPane scrollPane13;
     private ScrollPane scrollPane14;
     private ScrollPane scrollPane6;
