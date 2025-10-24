@@ -10,12 +10,13 @@ package EDD;
  */
 public class OS {
 
-    private Lista processList;
+    private Lista processList = new Lista();
     private Lista processTable = new Lista();
     private Lista deviceTable = new Lista();
-    private Scheduler scheduler;
-    private Dispatcher dispatcher;
     private int memorySpace = 4000;
+    private Scheduler scheduler = new Scheduler(processList, memorySpace, deviceTable);
+    private Dispatcher dispatcher = new Dispatcher();
+    private int remainingSpace = memorySpace;
     private Lista priorityList = new Lista();
     private Lista feedbackList = new Lista();
     private Cola readyQueue = new Cola();
@@ -37,7 +38,126 @@ public class OS {
         }
         return readyQueue;
     }
-    
+
+    public Lista getProcessList() {
+        return processList;
+    }
+
+    public void setProcessList(Lista processList) {
+        this.processList = processList;
+    }
+
+    public Lista getProcessTable() {
+        return processTable;
+    }
+
+    public void setProcessTable(Lista processTable) {
+        this.processTable = processTable;
+    }
+
+    public Scheduler getScheduler() {
+        return scheduler;
+    }
+
+    public void setScheduler(Scheduler scheduler) {
+        this.scheduler = scheduler;
+    }
+
+    public Dispatcher getDispatcher() {
+        return dispatcher;
+    }
+
+    public void setDispatcher(Dispatcher dispatcher) {
+        this.dispatcher = dispatcher;
+    }
+
+    public int getMemorySpace() {
+        return memorySpace;
+    }
+
+    public void setMemorySpace(int memorySpace) {
+        this.memorySpace = memorySpace;
+    }
+
+    public int getRemainingSpace() {
+        return remainingSpace;
+    }
+
+    public void setRemainingSpace(int remainingSpace) {
+        this.remainingSpace = remainingSpace;
+    }
+
+    public Cola getReadyQueue() {
+        return readyQueue;
+    }
+
+    public void setReadyQueue(Cola readyQueue) {
+        this.readyQueue = readyQueue;
+    }
+
+    public Cola getLongTermQueue() {
+        return longTermQueue;
+    }
+
+    public void setLongTermQueue(Cola longTermQueue) {
+        this.longTermQueue = longTermQueue;
+    }
+
+    public Lista getDeviceTable() {
+        return deviceTable;
+    }
+
+    public void setDeviceTable(Lista deviceTable) {
+        this.deviceTable = deviceTable;
+    }
+
+    public Lista getPriorityList() {
+        return priorityList;
+    }
+
+    public void setPriorityList(Lista priorityList) {
+        this.priorityList = priorityList;
+    }
+
+    public Lista getFeedbackList() {
+        return feedbackList;
+    }
+
+    public void setFeedbackList(Lista feedbackList) {
+        this.feedbackList = feedbackList;
+    }
+
+    public Cola getBlockedQueue() {
+        return blockedQueue;
+    }
+
+    public void setBlockedQueue(Cola blockedQueue) {
+        this.blockedQueue = blockedQueue;
+    }
+
+    public Cola getSuspendedReadyQueue() {
+        return suspendedReadyQueue;
+    }
+
+    public void setSuspendedReadyQueue(Cola suspendedReadyQueue) {
+        this.suspendedReadyQueue = suspendedReadyQueue;
+    }
+
+    public Cola getSuspendedBlockedQueue() {
+        return suspendedBlockedQueue;
+    }
+
+    public void setSuspendedBlockedQueue(Cola suspendedBlockedQueue) {
+        this.suspendedBlockedQueue = suspendedBlockedQueue;
+    }
+
+    public Lista getTerminatedProcessList() {
+        return terminatedProcessList;
+    }
+
+    public void setTerminatedProcessList(Lista terminatedProcessList) {
+        this.terminatedProcessList = terminatedProcessList;
+    }
     
     
     

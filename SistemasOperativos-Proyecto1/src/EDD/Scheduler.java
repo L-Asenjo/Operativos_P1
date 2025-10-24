@@ -30,9 +30,9 @@ public class Scheduler {
          
         if (readyQueue.getCount() > 0){
             var processToActivate = readyQueue.get(0);
-            PCB pcbOfActiveProcess = ((Nodo)processToActivate).getInfoProceso().getPcb();
+            PCB pcbOfActiveProcess = ((Nodo)processToActivate).getInfoPCB();
             
-            // verificar si el proceso ya está activado y si no lo está, activarlo
+            // verificar si el proceso ya está activado y si no lo está, activarlo   
             if (pcbOfActiveProcess.getStatus() != "running"){
                 dispatcher.activate(pcbOfActiveProcess, processList); // ready ---> running
             }
@@ -67,10 +67,11 @@ public class Scheduler {
             PCB pcbOfActiveProcess = ((Nodo)processToActivate).getInfoProceso().getPcb();
             
             // verificar si el proceso ya está activado y si no lo está, activarlo
-            if (pcbOfActiveProcess.getStatus() != "running"){
+            if (pcbOfActiveProcess.getStatus() != "running"){ //
                 dispatcher.activate(pcbOfActiveProcess, processList); // ready ---> running
             }
             
+            // while running
             Proceso toRun = dispatcher.getActiveProcess(processList);
             
             while(toRun.getPcb().getStatus() == "running"){
@@ -97,6 +98,7 @@ public class Scheduler {
                     dispatcher.activate(pcbOfActiveProcess, act.getQueue());
                 }
                 
+                //while running
                 Proceso toRun = dispatcher.getActiveProcess(processList);
                 while(toRun.getPcb().getStatus() == "running") {
                     if (toRun.getProcessingTime() == toRun.getTimeSpent()){
@@ -112,33 +114,55 @@ public class Scheduler {
         }
     }
     
-    public void Feedback(int setQuantum, Cola readyQueue, Lista readyQueueList, Dispatcher dispatcher) {
+    public void Feedback(int setQuantum, Cola readyQueue, Lista readyQueueList, Dispatcher dispatcher, Cola blockedQueue) {
+        System.out.println("en feedback");
         int quantum = setQuantum;
         int i = 0;
-        Object processToActivate = null;
+        PCB processToActivate = null;
         while (i < readyQueueList.count()){
             if (((Cola)readyQueueList.get(i)).getCount() > 0){
-                
-                processToActivate = (((Cola)readyQueueList.get(i)).dequeue());
-                dispatcher.activate(((Nodo)(processToActivate)).getInfoPCB(), processList);
-                
-                readyQueue.getQueue().remove(readyQueue.getQueue().indexOfPCB(processToActivate));
+                System.out.println("activando");
+                processToActivate = (PCB)(((Cola)readyQueueList.get(i)).dequeue());
+                System.out.println("id del proceso" + processToActivate.getId());
+                dispatcher.activate(processToActivate, processList);
+                System.out.println("status del pta" + processToActivate.getStatus());
+                readyQueue.getQueue().remove(readyQueue.getQueue().indexOf(processToActivate));
                 break;
             }
             i++;
         }
         
         Proceso toRun = dispatcher.getActiveProcess(processList);
+        /*if (toRun.getBound() == "IO" && toRun.getInterruptAt() == toRun.getPcb().getPc()-1){
+            toRun.getPcb().setStatus("blocked");
+        } else {
+            toRun.getPcb().setStatus("ready");
+        }*/
+        System.out.println(toRun.getPcb().getTimesIn());        
         toRun.getPcb().setTimesIn(toRun.getPcb().getTimesIn()+1);
+        System.out.println(toRun.getPcb().getStatus());
+        System.out.println(toRun.getBound());
+        System.out.println(toRun.getPcb().getId());
         while (toRun.getPcb().getStatus() == "running"){
-            if (toRun.getTimeSpent() > quantum || toRun.getProcessingTime() == toRun.getTimeSpent()){
+            /*System.out.println("is running");
+            System.out.println("time spent:" + toRun.getTimeSpent());
+            System.out.println("quantum" + quantum);*/
+            System.out.println(toRun.getProcessingTime() <= toRun.getTotalTimeSpent());
+            System.out.println(toRun.getTimeSpent() == quantum);
+            if (toRun.getTimeSpent() >= quantum || toRun.getProcessingTime() <= toRun.getTotalTimeSpent()){
+                System.out.println("desactivando");
                 dispatcher.deactivate(toRun);   // running --> ready
             }
-            if (toRun.getPcb().getPc()-1 == toRun.getInterruptAt()){
+            System.out.println(toRun.getPcb().getPc()-1);
+            System.out.println(toRun.getInterruptAt());
+            System.out.println(toRun.getPcb().getPc()-1 == toRun.getInterruptAt());
+            if (toRun.getBound() == "IO" && toRun.getPcb().getPc()-1 == toRun.getInterruptAt()){
                 toRun.getPcb().setStatus("blocked");
+                System.out.println("bloqueado");
+                blockedQueue.enqueue(toRun.getPcb());
                 try {
-                    toRun.sleep(toRun.getIoCicles());
-                    accessDevice(toRun, dispatcher);
+                    toRun.sleep(toRun.getIoCicles()*1000);
+                    accessDevice(toRun, dispatcher, blockedQueue);
                 } 
                 catch(InterruptedException e) {
                      // this part is executed when an exception (in this example InterruptedException) occurs
@@ -146,16 +170,28 @@ public class Scheduler {
                 }
                 
             }
+             try {
+                Thread.sleep(1000);
+            } 
+            catch(InterruptedException e) {
+                 // this part is executed when an exception (in this example InterruptedException) occurs
+                 System.out.println("en catch" + e);
+            }
+            
         }
-        if (toRun.getProcessingTime() == toRun.getTimeSpent()) {
-            /*se termina el proceso*/
+        System.out.println("ptime:" + toRun.getProcessingTime());
+        System.out.println("total time spent:" + toRun.getTotalTimeSpent());
+        if (toRun.getProcessingTime() <= toRun.getTotalTimeSpent()) {
+            toRun.getPcb().setStatus("terminated");
         } else {
             if (toRun.getPcb().getTimesIn() < readyQueueList.count()) {
-                ((Cola) readyQueueList.get(toRun.getPcb().getTimesIn())).enqueue(toRun);
+                ((Cola) readyQueueList.get(toRun.getPcb().getTimesIn())).enqueue(toRun.getPcb());
+                readyQueue.enqueue(toRun.getPcb());
             } else {
                 Cola aux = new Cola();
                 readyQueueList.add(aux);
-                ((Cola) readyQueueList.get(toRun.getPcb().getTimesIn())).enqueue(toRun);
+                ((Cola) readyQueueList.get(toRun.getPcb().getTimesIn())).enqueue(toRun.getPcb());
+                readyQueue.enqueue(toRun.getPcb());
             }
         }
     }
@@ -231,7 +267,7 @@ public class Scheduler {
             for (int x=0; x < priorityList.count(); x++){
                 Cola act = (Cola)priorityList.get(x);
                 
-                if(aux.getInfoProceso().getPriority() == x){
+                if(aux.getInfoProceso().getPriority() == x & !act.getQueue().contains(aux)){
                     act.enqueue(aux.getInfoProceso());
                 }
             }
@@ -259,7 +295,7 @@ public class Scheduler {
     }
     
     public void reorganiceFeedback (Cola readyQueue, Lista readyQueueList) {
-        
+
         if (readyQueueList.count() < getTimesIn(readyQueue)){
             int maxTimesIn = getTimesIn(readyQueue);
             
@@ -271,12 +307,12 @@ public class Scheduler {
                 i++;
             }
         }
-        
         int i = 0;
         while (i < readyQueue.getCount()) {
             int j = 0;
-            while (j < ((Cola)readyQueueList.get(i)).getCount()){
-                if (!(((Cola)readyQueueList.get(j)).getContains(readyQueue.get(i)))) {
+            int index = ((PCB)readyQueue.get(i)).getTimesIn();
+            while (j < readyQueueList.count()){
+                if ( index == j && !(((Cola)readyQueueList.get(j)).getContains(readyQueue.get(i)))) {
                     ((Cola)readyQueueList.get(j)).enqueue(readyQueue.get(i));
                 }
                 j++;
@@ -365,13 +401,12 @@ public class Scheduler {
         Lista timesIn = new Lista();
         
         for (int i = 0; i < readyQueue.getCount(); i++){
-            var aux = (Nodo)readyQueue.get(i);
+            var aux = (PCB)readyQueue.get(i);
             
-            if (!timesIn.contains(aux.getInfoPCB().getTimesIn())){
-                timesIn.add(aux.getInfoPCB().getTimesIn());
+            if (!timesIn.contains(aux.getTimesIn())){
+                timesIn.add(aux.getTimesIn());
             }
         }
-        
         return timesIn.count();
     }
        
@@ -392,18 +427,26 @@ public class Scheduler {
         next.setInfoDevice(auxDevice);
     }
     
-    public void accessDevice(Proceso blockedProcess, Dispatcher dispatcher){
+    public void accessDevice(Proceso blockedProcess, Dispatcher dispatcher, Cola blockedQueue){
         int i = 0;
         while (i < deviceTable.count()){
-            if (blockedProcess.getDeviceToUse() == ((Nodo)deviceTable.get(i)).getInfoDevice().getId()){
-                ((Nodo)deviceTable.get(i)).getInfoDevice().getSemaf().semWait(blockedProcess.getPcb());
+            if (blockedProcess.getDeviceToUse() == ((Device)deviceTable.get(i)).getId()){
+                try {
+                    System.out.println("accediendo al device");
+                    ((Device)deviceTable.get(i)).getSemaf().acquire();
+                } catch(InterruptedException e) {
+                    // this part is executed when an exception (in this example InterruptedException) occurs
+                    System.out.println("en catch" + e);
+                }
                 break;
             }
+            i++;
         }
         try {
-            blockedProcess.sleep(blockedProcess.getSatisfyCicles());
-            ((Nodo)deviceTable.get(i)).getInfoDevice().getSemaf().semSignal();
+            blockedProcess.sleep(blockedProcess.getSatisfyCicles()*1000);
+            ((Device)deviceTable.get(i)).getSemaf().release();
             dispatcher.deactivate(blockedProcess);
+            blockedQueue.getQueue().remove(blockedQueue.getQueue().indexOf(blockedProcess));
         } 
         catch(InterruptedException e) {
              // this part is executed when an exception (in this example InterruptedException) occurs

@@ -109,9 +109,12 @@ public class Lista {
      * @return Cantidad de elementos de la lista
      */
     public int count() {
-        if (this.next == null) {
+        if (this.value == null) {
+            return 0;
+        } else if (this.next == null){
             return 1;
-        } else {
+        }
+        else {
             return 1 + this.next.count();
         }
     }
@@ -173,51 +176,26 @@ public class Lista {
     }
 
     /**
-     * Función para obtener el índice de un elemento dentro de la lista.
-     *
-     * @param value Objeto a encontrar.
-     * @return Posición correspondiente al elemento en la lista.
-     */
-    public int indexOfDevice(Object value) {
-        int aux = ((Nodo) this.value.getValue()).getInfoDevice().getId();
+     
+    Función para obtener el índice de un elemento dentro de la lista.*
+    @param value Objeto a encontrar.
+    @return Posición correspondiente al elemento en la lista.*/
+    public int indexOf(Object value) {
+        Object aux = this.value.getValue();
 
-        if (this.value != null && aux == (((Nodo) value).getInfoDevice().getId())) {
-            return this.value.getIndex();
-        } else {
-            if (this.next != null) {
-                return this.next.indexOfDevice(value);
-            } else {
-                return -1;
+            if (this.value != null && (value instanceof PCB) && ((PCB)aux).getId() == ((PCB)value).getId()) {
+                return this.value.getIndex();
+            } else if (this.value != null && (value instanceof Device) && ((Device)aux).getId() == ((Device)value).getId()){
+                return this.value.getIndex();
+            } else if (this.value != null && (value instanceof Proceso) && ((Proceso)aux).getPcb().getId() == ((Proceso)value).getPcb().getId()) {
+                return this.value.getIndex();
+            }else {
+                if (this.next != null) {
+                    return this.next.indexOf(value);
+                } else {
+                    return -1;
+                }
             }
         }
-    }
-    
-    public int indexOfPCB(Object value) {
-        int aux = ((Nodo) this.value.getValue()).getInfoPCB().getId();
-
-        if (this.value != null && aux ==(((Nodo) value).getInfoPCB().getId())) {
-            return this.value.getIndex();
-        } else {
-            if (this.next != null) {
-                return this.next.indexOfPCB(value);
-            } else {
-                return -1;
-            }
-        }
-    }
-    
-    public int indexOfProceso(Object value) {
-        int aux = ((Nodo) this.value.getValue()).getInfoProceso().getPcb().getId();
-
-        if (this.value != null && aux ==(((Nodo) value).getInfoProceso().getPcb().getId())) {
-            return this.value.getIndex();
-        } else {
-            if (this.next != null) {
-                return this.next.indexOfPCB(value);
-            } else {
-                return -1;
-            }
-        }
-    }
 
 }

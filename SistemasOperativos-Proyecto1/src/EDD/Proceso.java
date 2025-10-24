@@ -12,8 +12,9 @@ public class Proceso extends Thread {
     private PCB pcb;
     private String bound;
     private int instructions;
-    private double processingTime = instructions * 0.005; //5ms por cada instruccion
+    private double processingTime; //50ms por cada instruccion
     private int timeSpent = 0;
+    private int totalTimeSpent = 0;
     private int memorySpace = instructions * 4;
     private int ioCicles;
     private int satisfyCicles;
@@ -25,6 +26,7 @@ public class Proceso extends Thread {
         this.pcb = new PCB(id, name);
         this.bound = bound;
         this.instructions = instructions;
+        this.processingTime = instructions;
     }
 
     public Proceso(int id, String name, String bound, int instructions, int ioCicles, int satisfyCicles, int deviceToUse) {
@@ -33,8 +35,9 @@ public class Proceso extends Thread {
         this.instructions = instructions;
         this.ioCicles = ioCicles;
         this.satisfyCicles = satisfyCicles;
-        this.interruptAt = (int) (instructions/2);
+        this.interruptAt = (int)(instructions/2);
         this.deviceToUse = deviceToUse;
+        this.processingTime = instructions;
     }
 
     
@@ -82,19 +85,57 @@ public class Proceso extends Thread {
 
     @Override //La clase thread ya tiene una clase run
     public void run(){
-        
+        timeSpent = 0;
+        pcb.setPc(pcb.getPc()+1);
+        pcb.setMar(pcb.getMar()+1);
         while (getTimeSpent() < getProcessingTime()){
             timeSpent++;
+            totalTimeSpent++;
             pcb.setPc(pcb.getPc()+1);
             pcb.setMar(pcb.getMar()+1);
+
+            /*if (this.getTimeSpent() == 3 || this.getProcessingTime() <= this.getTotalTimeSpent()){
+                System.out.println("desactivando");
+                /*this.getPcb().setStatus("ready");
+                this.interrupt();
+                break;
+            }
+            if (this.getPcb().getPc()-1 == this.getInterruptAt()){
+                System.out.println("bloqueado");
+                try {
+                    System.out.println("esperando io");
+                    this.sleep(this.getIoCicles());
+                    this.interrupt();
+                    break;
+                } 
+                catch(InterruptedException e) {
+                     // this part is executed when an exception (in this example InterruptedException) occurs
+                     System.out.println("en catch" + e);
+                }
+
+            }*/
+
             try {
-                    Thread.sleep(1000); // pausa de 1 s
-                } catch (InterruptedException e) {
-                    System.out.println("Hilo interrumpido");
-                    break; // salir del bucle si se interrumpe
-                }  
+                Thread.sleep(1000); // pausa de 1 s
+            } catch (InterruptedException e) {
+                System.out.println("Hilo interrumpido");
+                synchronized (this) {
+                try {
+                    // El hilo se pone en estado WAITING
+                    this.wait(); 
+                    timeSpent = 0;
+
+
+                } catch (InterruptedException er) {
+                    // Esto ocurre cuando el Scheduler llama a notify() o notifyAll()
+                    // El hilo es despertado y puede salir del bucle while() o continuar.
+                    Thread.currentThread().interrupt(); // Se mantiene el estado de interrupción
+                }
+            }
+            }
         }
     }
+    
     
     
     
@@ -126,6 +167,26 @@ public class Proceso extends Thread {
         return deviceToUse;
     }
     
+    /**
+     * @param timeSpent the timeSpent to set
+     */
+    public void setTimeSpent(int timeSpent) {
+        this.timeSpent = timeSpent;
+    }
+
+    /**
+     * @return the totalTimeSpent
+     */
+    public int getTotalTimeSpent() {
+        return totalTimeSpent;
+    }
+
+    /**
+     * @param totalTimeSpent the totalTimeSpent to set
+     */
+    public void setTotalTimeSpent(int totalTimeSpent) {
+        this.totalTimeSpent = totalTimeSpent;
+    }
     
     
 }
