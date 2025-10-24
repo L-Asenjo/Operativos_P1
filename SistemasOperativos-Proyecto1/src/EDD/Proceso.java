@@ -22,15 +22,10 @@ public class Proceso extends Thread {
     private int deviceToUse;
 
 
-    public Proceso(int id, String name, String bound, int instructions) {
-        this.pcb = new PCB(id, name);
-        this.bound = bound;
-        this.instructions = instructions;
-        this.processingTime = instructions;
-    }
 
-    public Proceso(int id, String name, String bound, int instructions, int ioCicles, int satisfyCicles, int deviceToUse) {
+    public Proceso(int id, String name, String bound, int instructions, int ioCicles, int satisfyCicles, int deviceToUse, int priority) {
         this.pcb = new PCB(id, name);
+        this.pcb.setPriorityFSS(priority);
         this.bound = bound;
         this.instructions = instructions;
         this.ioCicles = ioCicles;
@@ -38,6 +33,7 @@ public class Proceso extends Thread {
         this.interruptAt = (int)(instructions/2);
         this.deviceToUse = deviceToUse;
         this.processingTime = instructions;
+        this.memorySpace = instructions * 4;
     }
 
     

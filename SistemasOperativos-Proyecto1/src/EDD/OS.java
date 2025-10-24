@@ -14,7 +14,7 @@ public class OS {
     private Lista processTable = new Lista();
     private Lista deviceTable = new Lista();
     private int memorySpace = 4000;
-    private Scheduler scheduler = new Scheduler(processList, memorySpace, deviceTable);
+    private Scheduler scheduler;
     private Dispatcher dispatcher = new Dispatcher();
     private int remainingSpace = memorySpace;
     private Lista priorityList = new Lista();
@@ -39,20 +39,24 @@ public class OS {
         return getReadyQueue();
     }
 
-    public OS(Scheduler scheduler, Dispatcher dispatcher) {
-        this.scheduler = scheduler;
-        this.dispatcher = dispatcher;
+    public OS(int memorySpace) {
+        this.scheduler = new Scheduler(processList, memorySpace, deviceTable);
     }
     
     
-    public boolean canBeReady(Proceso process, Cola readyQueue, Cola suspendedQueue){
+    public boolean canBeReady(Proceso process){
     
-        int memory = scheduler.getRemainingSpace() - process.getMemorySpace();
+        int memory = getRemainingSpace() - process.getMemorySpace();
+        this.setRemainingSpace(memory);
+        System.out.println(memory);
+        
         if (memory > 0){
-            readyQueue.enqueue(process.getPcb());
+            process.getPcb().setStatus("ready");
+            System.out.println("si");
             return true;
         } else {
-            suspendedQueue.enqueue(process.getPcb());
+            process.getPcb().setStatus("suspendedReady");
+            System.out.println("no");
             return false;
         }
     }

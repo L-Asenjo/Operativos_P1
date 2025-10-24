@@ -22,6 +22,7 @@ public class Scheduler {
         this.processList = processList;
         this.memoryAvaiable = memorySpace;
         this.deviceTable = deviceTable;
+        this.remainingSpace = memoryAvaiable;
     }
     
     
