@@ -14,6 +14,7 @@ public class Scheduler {
     
     private Lista processList; //Lista en la cual se guardan todos los procesos a ejecutar.
     private int memoryAvaiable;
+    private int remainingSpace = memoryAvaiable;
                                      //Se agregan desde la interfaz
 
     public Scheduler(Lista processList, int memorySpace) {
@@ -26,19 +27,23 @@ public class Scheduler {
     public void RoundRobin (int setQuantum, Cola readyQueue, Dispatcher dispatcher){
         int quantum = setQuantum;
          
+        if (readyQueue == null){
+        return;}
+        
         while(readyQueue.getCount() > 0){           //if
-            var processToActivate = readyQueue.get(0);
-            PCB pcbOfActiveProcess = ((Nodo)processToActivate).getInfoPCB();
+            
+            PCB pcbOfActiveProcess = (PCB) readyQueue.get(0);
+            System.out.println(pcbOfActiveProcess.getStatus());
             
             // verificar si el proceso ya está activado y si no lo está, activarlo   
-            if (pcbOfActiveProcess.getStatus() != "running"){
-                dispatcher.activate(pcbOfActiveProcess, processList); // ready ---> running
+            if (!"running".equals(pcbOfActiveProcess.getStatus())){
+                dispatcher.activate(pcbOfActiveProcess, getProcessList()); // ready ---> running
             }
             
-            Proceso toRun = dispatcher.getActiveProcess(processList);
+            Proceso toRun = dispatcher.getActiveProcess(getProcessList());
             
             // while
-            if (((Nodo)processToActivate).getInfoProceso().getTimeSpent() > quantum){
+            if ( pcbOfActiveProcess.getTimesIn() > quantum){
                 toRun.setTotalTimeSpent(toRun.getTimeSpent());
                 dispatcher.deactivate(toRun);   // running --> ready
                 var aux = readyQueue.get(0);
@@ -56,16 +61,16 @@ public class Scheduler {
     
     public void SPN(Cola readyQueue, Dispatcher dispatcher){
         while(readyQueue.getCount() > 0){       //if readyQueue.getCount() > 0
-            var processToActivate = readyQueue.get(0);
-            PCB pcbOfActiveProcess = ((Nodo)processToActivate).getInfoProceso().getPcb();
+            
+            PCB pcbOfActiveProcess = (PCB) readyQueue.get(0);
             
             // verificar si el proceso ya está activado y si no lo está, activarlo
             if (pcbOfActiveProcess.getStatus() != "running"){ //
-                dispatcher.activate(pcbOfActiveProcess, processList); // ready ---> running
+                dispatcher.activate(pcbOfActiveProcess, getProcessList()); // ready ---> running
             }
             
             // while running
-            Proceso toRun = dispatcher.getActiveProcess(processList);
+            Proceso toRun = dispatcher.getActiveProcess(getProcessList());
             if (toRun.getProcessingTime() == toRun.getTimeSpent()){
                 dispatcher.deactivate(toRun);
                 readyQueue.dequeue();
@@ -76,8 +81,8 @@ public class Scheduler {
     public void PriorityPlanification(Cola readyQueue, Dispatcher dispatcher, Lista priorityList){
         for (int i = 0; i < priorityList.count(); i++){
             Cola act = (Cola)priorityList.get(i);
-            var processToActivate = act.get(0);
-            PCB pcbOfActiveProcess = ((Nodo)processToActivate).getInfoProceso().getPcb();
+            
+            PCB pcbOfActiveProcess = (PCB) act.get(0);
                 
             while (act.getCount() > 0){ //if act.getCount() > 0
                 if (pcbOfActiveProcess.getStatus() != "running"){
@@ -85,7 +90,7 @@ public class Scheduler {
                 }
                 
                 //while running
-                Proceso toRun = dispatcher.getActiveProcess(processList);
+                Proceso toRun = dispatcher.getActiveProcess(getProcessList());
                 if (toRun.getProcessingTime() == toRun.getTimeSpent()){
                     dispatcher.deactivate(toRun);
                     act.dequeue();
@@ -102,7 +107,7 @@ public class Scheduler {
             if (((Cola)readyQueueList.get(i)).getCount() > 0){
                 
                 processToActivate = (((Cola)readyQueueList.get(i)).dequeue());
-                dispatcher.activate(((Nodo)(processToActivate)).getInfoPCB(), processList);
+                dispatcher.activate(((PCB)(processToActivate)), getProcessList());
                 
                 readyQueue.getQueue().remove(readyQueue.getQueue().indexOfPCB(processToActivate));
                 break;
@@ -110,7 +115,7 @@ public class Scheduler {
             i++;
         }
         
-        Proceso toRun = dispatcher.getActiveProcess(processList);
+        Proceso toRun = dispatcher.getActiveProcess(getProcessList());
         toRun.getPcb().setTimesIn(toRun.getPcb().getTimesIn()+1);
         while (toRun.getPcb().getStatus() == "running"){
             if (toRun.getTimeSpent() > quantum || toRun.getProcessingTime() == toRun.getTimeSpent()){
@@ -135,9 +140,9 @@ public class Scheduler {
         if (readyQueue.getCount() > 0) {
             
             var processToActivate = readyQueue.dequeue();
-            dispatcher.activate(((Nodo)processToActivate).getInfoPCB(), processList);
+            dispatcher.activate(((PCB)(processToActivate)), getProcessList());
             
-            Proceso toRun = dispatcher.getActiveProcess(processList);
+            Proceso toRun = dispatcher.getActiveProcess(getProcessList());
             
             while (toRun.getPcb().getStatus() == "running"){
                 if (toRun.getTimeSpent() > quantum || toRun.getProcessingTime() == toRun.getTimeSpent()){
@@ -155,9 +160,9 @@ public class Scheduler {
     public void SRT (Cola readyQueue, Dispatcher dispatcher) {
         if (readyQueue.getCount() > 0) {
             var processToActivate = readyQueue.dequeue();
-            dispatcher.activate(((Nodo)processToActivate).getInfoPCB(), processList);
+            dispatcher.activate(((PCB)(processToActivate)), getProcessList());
             
-            Proceso toRun = dispatcher.getActiveProcess(processList);
+            Proceso toRun = dispatcher.getActiveProcess(getProcessList());
             
             while (toRun.getPcb().getStatus() == "running"){
                 if (toRun.getProcessingTime() == toRun.getTimeSpent()){
@@ -187,13 +192,13 @@ public class Scheduler {
         
         // Agregar cada proceso a su lista de prioridad correspondiente
         for (int j=0; j < readyQueue.getCount(); j++){
-            Nodo aux = (Nodo)readyQueue.get(j);
+            PCB aux = (PCB)readyQueue.get(j);
             
             for (int x=0; x < priorityList.count(); x++){
                 Cola act = (Cola)priorityList.get(x);
                 
-                if(aux.getInfoProceso().getPriority() == x & !act.getQueue().contains(aux)){
-                    act.enqueue(aux.getInfoProceso());
+                if(aux.getPriority() == x & !act.getQueue().contains(aux)){
+                    act.enqueue(aux);
                 }
             }
         }
@@ -201,6 +206,7 @@ public class Scheduler {
         return priorityList;
     }
     
+    /*
     public void reorganiceSPN(Cola readyQueue){
         for (int i = 0; i < readyQueue.getCount()-1; i++){
             
@@ -308,14 +314,14 @@ public class Scheduler {
             i++;
         }
     }
-    
+    */
     public int getPriorities(Cola readyQueue){
         Lista priorities = new Lista();
         
         for (int i = 0; i < readyQueue.getCount(); i++){
-            Nodo aux = (Nodo)readyQueue.get(i);
-            if (!priorities.contains(aux.getInfoProceso().getPriority())){
-                priorities.add(aux.getInfoProceso().getPriority());
+            PCB aux = (PCB)readyQueue.get(i);
+            if (!priorities.contains(aux.getPriority())){
+                priorities.add(aux.getPriority());
             }
         }
         
@@ -326,16 +332,17 @@ public class Scheduler {
         Lista timesIn = new Lista();
         
         for (int i = 0; i < readyQueue.getCount(); i++){
-            var aux = (Nodo)readyQueue.get(i);
+            PCB aux = (PCB)readyQueue.get(i);
             
-            if (!timesIn.contains(aux.getInfoPCB().getTimesIn())){
-                timesIn.add(aux.getInfoPCB().getTimesIn());
+            if (!timesIn.contains(aux.getTimesIn())){
+                timesIn.add(aux.getTimesIn());
             }
         }
         
         return timesIn.count();
     }
-       
+    
+    /*
     public void swapNodes(Nodo first, Nodo next){
         // Intercambio de procesos
         Proceso auxProcess = first.getInfoProceso();
@@ -352,6 +359,51 @@ public class Scheduler {
         first.setInfoDevice(next.getInfoDevice());
         next.setInfoDevice(auxDevice);
     }
+    */
+    
+
+    /**
+     * @return the processList
+     */
+    public Lista getProcessList() {
+        return processList;
+    }
+
+    /**
+     * @param processList the processList to set
+     */
+    public void setProcessList(Lista processList) {
+        this.processList = processList;
+    }
+
+    /**
+     * @return the memoryAvaiable
+     */
+    public int getMemoryAvaiable() {
+        return memoryAvaiable;
+    }
+
+    /**
+     * @param memoryAvaiable the memoryAvaiable to set
+     */
+    public void setMemoryAvaiable(int memoryAvaiable) {
+        this.memoryAvaiable = memoryAvaiable;
+    }
+
+    /**
+     * @return the remainingSpace
+     */
+    public int getRemainingSpace() {
+        return remainingSpace;
+    }
+
+    /**
+     * @param remainingSpace the remainingSpace to set
+     */
+    public void setRemainingSpace(int remainingSpace) {
+        this.remainingSpace = remainingSpace;
+    }
+    
     
     
 }

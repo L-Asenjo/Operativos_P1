@@ -5,7 +5,6 @@
 package main;
 
 import Interfaz.Interface;
-
 /**
  *
  * @author miche_ysmoa6e
@@ -16,6 +15,7 @@ public class main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        
         Interface menu = new Interface();
         menu.setVisible(true);
         // TODO code application logic here

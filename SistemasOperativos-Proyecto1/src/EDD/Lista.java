@@ -21,12 +21,12 @@ public class Lista {
     /**
      * Procedimiento para agregar un objeto en la lista
      *
-     * @param j Elemento a agregar a la lista.
+     * @param value1 Proceso
      */
-    public void add(Object j) {
-        if (j != null) {
+    public void add(Object value1) {
+        if (value1 != null) {
             ElementoLista newValue = new ElementoLista();
-            newValue.setValue(j);
+            newValue.setValue(value1);
             newValue.setIndex(count);
 
             if (this.value == null) {
@@ -43,6 +43,7 @@ public class Lista {
             count++;
         }
     }
+
 
     /**
      * Función para obtener un elemento según su índice dentro de la lista
@@ -109,6 +110,10 @@ public class Lista {
      * @return Cantidad de elementos de la lista
      */
     public int count() {
+        if (this.value == null) {
+            return 0;
+        }
+        
         if (this.next == null) {
             return 1;
         } else {
@@ -136,11 +141,8 @@ public class Lista {
         }
     }
 
-    /**
-     * Procedimiento para contener la metadata de los elementos una lista de nodos.
-     * 
-     * @return String con la información indicada.
-     */
+    /*
+    
     public String printList() {
         String txt = "";
         
@@ -153,7 +155,9 @@ public class Lista {
         }
         return txt;
     }
-
+    
+    */
+    
     /**
      * Función para verificar si un objeto se encuentra dentro de la lista.
      *
@@ -172,12 +176,15 @@ public class Lista {
         }
     }
 
+    /*
     /**
      * Función para obtener el índice de un elemento dentro de la lista.
      *
      * @param value Objeto a encontrar.
      * @return Posición correspondiente al elemento en la lista.
      */
+    
+    /*
     public int indexOfDevice(Object value) {
         int aux = ((Nodo) this.value.getValue()).getInfoDevice().getId();
 
@@ -191,11 +198,12 @@ public class Lista {
             }
         }
     }
+    */
     
     public int indexOfPCB(Object value) {
-        int aux = ((Nodo) this.value.getValue()).getInfoPCB().getId();
+        int aux = ((PCB) this.value.getValue()).getId();
 
-        if (this.value != null && aux ==(((Nodo) value).getInfoPCB().getId())) {
+        if (this.value != null && aux ==(((PCB) value).getId())) {
             return this.value.getIndex();
         } else {
             if (this.next != null) {
@@ -206,6 +214,7 @@ public class Lista {
         }
     }
     
+    /*
     public int indexOfProceso(Object value) {
         int aux = ((Nodo) this.value.getValue()).getInfoProceso().getPcb().getId();
 
@@ -219,5 +228,5 @@ public class Lista {
             }
         }
     }
-
+    */
 }

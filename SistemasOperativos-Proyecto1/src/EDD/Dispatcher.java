@@ -17,7 +17,7 @@ public class Dispatcher {
         int i = 0;
         var procesoAux = procesos.get(i);
         while (i < procesos.count()){
-            if (pcb.getId() == ((Nodo)procesos.get(i)).getInfoPCB().getId()){
+            if (pcb.getId() == ((Proceso)procesos.get(i)).getPcb().getId()){
                 procesoAux = procesos.get(i);
                 break;
             } else {
@@ -25,8 +25,8 @@ public class Dispatcher {
             } 
         }
         
-        ((Nodo) procesoAux).getInfoProceso().getPcb().setStatus("running");
-        ((Nodo) procesoAux).getInfoProceso().run();
+        ((Proceso) procesoAux).getPcb().setStatus("running");
+        ((Proceso) procesoAux).run();
         
     }
     
@@ -40,7 +40,7 @@ public class Dispatcher {
         int i = 0;
         var procesoAux = procesos.get(i);
         while (i < procesos.count()){
-            if (((Nodo)procesoAux).getInfoPCB().getStatus() == "running"){
+            if (((Proceso)procesoAux).getPcb().getStatus() == "running"){
                 procesoAux = procesos.get(i);
                 break;
             } else {
