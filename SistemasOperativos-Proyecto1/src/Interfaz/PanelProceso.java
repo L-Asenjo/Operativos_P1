@@ -22,9 +22,30 @@ public class PanelProceso extends javax.swing.JPanel {
         this.process_name.setText(process_name);
         this.process_status.setText(process_status);
         
+        this.setBorder(javax.swing.BorderFactory.createCompoundBorder(
+                javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153), 1),
+                javax.swing.BorderFactory.createEmptyBorder(8, 8, 8, 8)
+        ));
+        
     // End of variables declaration          
 
     }
+    @Override
+    public java.awt.Dimension getPreferredSize() {
+        return new java.awt.Dimension(215, 232);
+    }
+
+    @Override
+    public java.awt.Dimension getMaximumSize() {
+        return new java.awt.Dimension(215, 232);
+    }
+
+    @Override
+    public java.awt.Dimension getMinimumSize() {
+        return new java.awt.Dimension(215, 232);
+    }
+    
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -46,6 +67,8 @@ public class PanelProceso extends javax.swing.JPanel {
         process_name = new javax.swing.JLabel();
         PC_status = new javax.swing.JLabel();
         MARS_status = new javax.swing.JLabel();
+
+        setPreferredSize(new java.awt.Dimension(215, 141));
 
         jLabel1.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -76,30 +99,30 @@ public class PanelProceso extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(37, 37, 37)
+            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel2)
                     .addComponent(jLabel3)
                     .addComponent(jLabel4)
                     .addComponent(jLabel5)
                     .addComponent(jLabel6))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(process_id)
                     .addComponent(process_status)
                     .addComponent(process_name)
                     .addComponent(PC_status)
                     .addComponent(MARS_status))
-                .addContainerGap())
-            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(28, 28, 28)
+                .addContainerGap()
                 .addComponent(jLabel1)
-                .addGap(26, 26, 26)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel2)
@@ -121,7 +144,7 @@ public class PanelProceso extends javax.swing.JPanel {
                         .addComponent(PC_status)
                         .addGap(18, 18, 18)
                         .addComponent(MARS_status)))
-                .addContainerGap(32, Short.MAX_VALUE))
+                .addContainerGap(25, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
