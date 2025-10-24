@@ -25,6 +25,7 @@ public class OS {
     private Cola suspendedReadyQueue = new Cola();
     private Cola suspendedBlockedQueue = new Cola();
     private Lista terminatedProcessList = new Lista();
+    private int quantum = 3;
     
     public Cola fillReadyQueue(){
         //Cola readyQueue = new Cola();
@@ -235,6 +236,20 @@ public class OS {
 
     public void setTerminatedProcessList(Lista terminatedProcessList) {
         this.terminatedProcessList = terminatedProcessList;
+    }
+
+    /**
+     * @return the quantum
+     */
+    public int getQuantum() {
+        return quantum;
+    }
+
+    /**
+     * @param quantum the quantum to set
+     */
+    public void setQuantum(int quantum) {
+        this.quantum = quantum;
     }
     
     

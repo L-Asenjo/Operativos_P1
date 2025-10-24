@@ -143,22 +143,20 @@ public class Lista {
         }
     }
 
-    /*
     
-    public String printList() {
+    
+    public String printListProcess() {
         String txt = "";
         
         for (int i = 0; i < count(); i++) {
-            if ((Nodo)get(i)!= null) {
-                txt = txt + "\n"+ ((Nodo)get(i)).getInfoPCB() 
-                        + "\n"+ ((Nodo)get(i)).getInfoProceso()
-                        + "\n"+ ((Nodo)get(i)).getInfoDevice() + "\n";
+            if ((Proceso)get(i)!= null) {
+                txt = txt + ((Proceso)get(i)).getName() + "\n";
             }
         }
         return txt;
     }
     
-    */
+    
     
     /**
      * Función para verificar si un objeto se encuentra dentro de la lista.
