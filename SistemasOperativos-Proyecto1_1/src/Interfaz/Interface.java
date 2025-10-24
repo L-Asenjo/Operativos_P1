@@ -1,11 +1,10 @@
 /*
- * Click nbfs://nbhoperativeSystemt/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhoperativeSystemt/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package Interfaz;
 
 import EDD.Cola;
-import EDD.Device;
 import EDD.Dispatcher;
 import EDD.Lista;
 import EDD.PCB;
@@ -43,8 +42,7 @@ import javax.swing.WindowConstants;
 public class Interface extends javax.swing.JFrame {
 
     private Lista allQueue = new Lista();
-    private Lista devices = new Lista();
-    private OS operativeSystem = new OS(new Scheduler(allQueue, 4000, devices), new Dispatcher() );
+    private OS operativeSystem = new OS(new Scheduler(allQueue, 4000), new Dispatcher() );
     private boolean hasChanged = false;
     
     // inside class Interface:
@@ -52,7 +50,8 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JPanel suspendedBlockedContainer; // holds PanelProceso instances
         
     /**
-     * Creates new form Interfacesp
+     * Creates new form Interface
+     * @param readyQueue
      */
     public Interface() {
         initComponents();
@@ -76,7 +75,7 @@ public class Interface extends javax.swing.JFrame {
         // Example: add the suspendedBlockedScrollPane to your layout where scrollPane13 was used.
     }
     
-    public void addPanelProcesoToperativeSystemuspendedBlocked(Proceso nodo) {
+    public void addPanelProcesoToSuspendedBlocked(Proceso nodo) {
         if (nodo == null) return;
 
         // adapt getters to your classes
@@ -715,9 +714,8 @@ public class Interface extends javax.swing.JFrame {
         int inst = ((Number) inst_amount.getValue()).intValue();
         int interruptCicleVal = ((Number) interrupt_cicle.getValue()).intValue();
         int interruptHandledVal = ((Number) interrupt_handled.getValue()).intValue();
-        Device nwq = new Device(1);
 
-        Proceso newProcess = new Proceso(getId(), name, type, inst, interruptCicleVal, interruptHandledVal, 1);
+        Proceso newProcess = new Proceso(getId(), name, type, inst, interruptCicleVal, interruptHandledVal);
 
         // add to scheduler/process list
         operativeSystem.getScheduler().getProcessList().add(newProcess);
@@ -759,21 +757,9 @@ public class Interface extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_create_process1ActionPerformed
 
-    private void generate_processesActionPerformed(ActionEvent evt) {                                                   
+    private void generate_processesActionPerformed(ActionEvent evt) {//GEN-FIRST:event_generate_processesActionPerformed
         // TODO add your handling code here:
-
-        generateProcess();
-        generateDevices();
-        /*operativeSystem.getScheduler().reorganiceFeedback(readyQueue, operativeSystem.getFeedbackList());*/
-        int i = 0;
-        while (operativeSystem.getReadyQueue().getCount() > 0) {
-//            operativeSystem.getScheduler().Feedback(3, readyQueue, operativeSystem.getFeedbackList(), operativeSystem.getDispatcher(), operativeSystem.getBlockedQueue());
-            operativeSystem.getScheduler().RoundRobin(3, operativeSystem.getReadyQueue(), operativeSystem.getDispatcher(), operativeSystem.getBlockedQueue());
-            i++;
-        }
-        
-    }                                        
-
+    }//GEN-LAST:event_generate_processesActionPerformed
 
     /**
      * @param args the command line arguments
@@ -800,8 +786,6 @@ public class Interface extends javax.swing.JFrame {
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(Interface.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
-        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
@@ -874,52 +858,4 @@ public class Interface extends javax.swing.JFrame {
     private Panel statistics_panel;
     // End of variables declaration//GEN-END:variables
 
-    public void generateProcess(){
-        int i = 0;
-        while (i < 20) {
-            String name = "Proceso"+i;
-            Proceso newProceso = null;
-            if (i%2 == 0){
-                String bound = "CPU";
-                
-                newProceso = new Proceso(i, name, bound, 10);
-            } else {
-                String bound = "IO";
-                int deviceID = 0;
-                if (i%3==0){
-                    deviceID = 1;
-                } 
-                
-                newProceso = new Proceso(i, name, bound, 5, 2, 3, deviceID);
-            }
-            newProceso.setTimeSpent(0);
-            newProceso.setTotalTimeSpent(0);
-            newProceso.getPcb().setPc(0);
-            newProceso.getPcb().setMar(0);
-            operativeSystem.getProcessTable().add(newProceso.getPcb());
-            if (operativeSystem.getRemainingSpace() > newProceso.getMemorySpace()){
-                newProceso.getPcb().setStatus("ready");
-                operativeSystem.setRemainingSpace(operativeSystem.getRemainingSpace()-newProceso.getMemorySpace());
-                operativeSystem.getReadyQueue().enqueue(newProceso.getPcb());
-            } else {
-                operativeSystem.getLongTermQueue().enqueue(newProceso.getPcb());
-            }
-            operativeSystem.getProcessList().add(newProceso);
-            i++;
-        }
-    }
-    
-    public void generateDevices(){
-        int i = 0;
-        while (i<5){
-            Device dev = new Device(i);
-            operativeSystem.getDeviceTable().add(dev);
-            i++;
-        }
-    }
 }
-    
-    
-    
-    
-

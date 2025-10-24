@@ -10,13 +10,12 @@ package EDD;
  */
 public class OS {
 
-    private Lista processList = new Lista();
+    private Lista processList;
     private Lista processTable = new Lista();
     private Lista deviceTable = new Lista();
+    private Scheduler scheduler;
+    private Dispatcher dispatcher;
     private int memorySpace = 4000;
-    private Scheduler scheduler = new Scheduler(processList, memorySpace, deviceTable);
-    private Dispatcher dispatcher = new Dispatcher();
-    private int remainingSpace = memorySpace;
     private Lista priorityList = new Lista();
     private Lista feedbackList = new Lista();
     private Cola readyQueue = new Cola();
@@ -59,7 +58,7 @@ public class OS {
     
 
     public void executeRoundRobin(){
-        scheduler.RoundRobin(4, readyQueue, dispatcher, blockedQueue);
+        scheduler.RoundRobin(4, readyQueue, dispatcher);
     }
     /**
      * @return the processList
@@ -180,58 +179,83 @@ public class OS {
         return readyQueue;
     }
 
-    public int getRemainingSpace() {
-        return remainingSpace;
-    }
-
-    public void setRemainingSpace(int remainingSpace) {
-        this.remainingSpace = remainingSpace;
-    }
-
+    /**
+     * @param readyQueue the readyQueue to set
+     */
     public void setReadyQueue(Cola readyQueue) {
         this.readyQueue = readyQueue;
     }
 
+    /**
+     * @return the longTermQueue
+     */
     public Cola getLongTermQueue() {
         return longTermQueue;
     }
 
+    /**
+     * @param longTermQueue the longTermQueue to set
+     */
     public void setLongTermQueue(Cola longTermQueue) {
         this.longTermQueue = longTermQueue;
     }
 
-
+    /**
+     * @return the blockedQueue
+     */
     public Cola getBlockedQueue() {
         return blockedQueue;
     }
 
+    /**
+     * @param blockedQueue the blockedQueue to set
+     */
     public void setBlockedQueue(Cola blockedQueue) {
         this.blockedQueue = blockedQueue;
     }
 
+    /**
+     * @return the suspendedReadyQueue
+     */
     public Cola getSuspendedReadyQueue() {
         return suspendedReadyQueue;
     }
 
+    /**
+     * @param suspendedReadyQueue the suspendedReadyQueue to set
+     */
     public void setSuspendedReadyQueue(Cola suspendedReadyQueue) {
         this.suspendedReadyQueue = suspendedReadyQueue;
     }
 
+    /**
+     * @return the suspendedBlockedQueue
+     */
     public Cola getSuspendedBlockedQueue() {
         return suspendedBlockedQueue;
     }
 
+    /**
+     * @param suspendedBlockedQueue the suspendedBlockedQueue to set
+     */
     public void setSuspendedBlockedQueue(Cola suspendedBlockedQueue) {
         this.suspendedBlockedQueue = suspendedBlockedQueue;
     }
 
+    /**
+     * @return the terminatedProcessList
+     */
     public Lista getTerminatedProcessList() {
         return terminatedProcessList;
     }
 
+    /**
+     * @param terminatedProcessList the terminatedProcessList to set
+     */
     public void setTerminatedProcessList(Lista terminatedProcessList) {
         this.terminatedProcessList = terminatedProcessList;
     }
+    
     
     
     

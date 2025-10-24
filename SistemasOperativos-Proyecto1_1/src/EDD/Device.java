@@ -4,27 +4,20 @@
  */
 package EDD;
 
-
-import java.util.concurrent.Semaphore;
-
 /**
  *
  * @author miche_ysmoa6e
  */
 public class Device {
     private int id;
-    private Semaphore semaf;
+    private Semaforo semaf;
 
     public Device(int id) {
         this.id = id;
-        this.semaf = new Semaphore(1);
+        this.semaf = new Semaforo();
     }
 
-    public Device() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    public Semaphore getSemaf() {
+    public Semaforo getSemaf() {
         return semaf;
     }
     /**

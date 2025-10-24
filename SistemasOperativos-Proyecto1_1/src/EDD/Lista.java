@@ -112,15 +112,13 @@ public class Lista {
     public int count() {
         if (this.value == null) {
             return 0;
-        } 
+        }
         
         if (this.next == null) {
             return 1;
-        } else if (this.next == null){
         } else {
             return 1 + this.next.count();
-        } 
-        return 0;
+        }
     }
 
     /**
@@ -180,110 +178,55 @@ public class Lista {
 
     /*
     /**
-     
-    Función para obtener el índice de un elemento dentro de la lista.*
-    @param value Objeto a encontrar.
-    @return Posición correspondiente al elemento en la lista.*/
-    public int indexOf(Object value) {
-        Object aux = this.value.getValue();
+     * Función para obtener el índice de un elemento dentro de la lista.
+     *
+     * @param value Objeto a encontrar.
+     * @return Posición correspondiente al elemento en la lista.
+     */
+    
+    /*
+    public int indexOfDevice(Object value) {
+        int aux = ((Nodo) this.value.getValue()).getInfoDevice().getId();
 
-            if ((value instanceof PCB)) {
-                if(this.value != null && ((PCB)aux).getId() == ((PCB)value).getId()){
-                    return this.value.getIndex();
-                } else {
-                    if (this.next != null) {
-                        return this.next.indexOf(value);
-                    } else {
-                        return -1;
-                    }
-                }
-                   
-            } else if ((value instanceof Device)){
-                if(this.value != null && ((Device)aux).getId() == ((Device)value).getId()){
-                    return this.value.getIndex();
-                } else {
-                    if (this.next != null) {
-                        return this.next.indexOf(value);
-                    } else {
-                        return -1;
-                    }
-                }
-            } else if (value instanceof Proceso){
-                if(this.value != null && ((Proceso)aux).getPcb().getId() == ((Proceso)value).getPcb().getId()){
-                    return this.value.getIndex();
-                } else {
-                    if (this.next != null) {
-                        return this.next.indexOf(value);
-                    } else {
-                        return -1;
-                    }
-                }
+        if (this.value != null && aux == (((Nodo) value).getInfoDevice().getId())) {
+            return this.value.getIndex();
+        } else {
+            if (this.next != null) {
+                return this.next.indexOfDevice(value);
             } else {
                 return -1;
             }
+        }
     }
+    */
     
-    private Lista getNodeAt(int index) {
-        if (index < 0 || index >= count()) return null;
-        Lista current = this;
-        int i = 0;
-        while (i < index) {
-            current = current.next;
-            i++;
-        }
-        return current;
-    }
+    public int indexOfPCB(Object value) {
+        int aux = ((PCB) this.value.getValue()).getId();
 
-    /**
-     * Intercambia los valores almacenados en los nodos de índice i y j.
-     * Actualiza los índices de ElementoLista para mantener consistencia.
-     *
-     * @param i índice del primer elemento
-     * @param j índice del segundo elemento
-     */
-    public void swap(int i, int j) {
-        if (i == j) return; // nada que hacer
-        if (i < 0 || j < 0) return;
-        if (i >= count() || j >= count()) return;
-
-        // asegurar que i < j para simplificar
-        if (i > j) {
-            int tmp = i;
-            i = j;
-            j = tmp;
-        }
-        
-
-        Lista nodeI = getNodeAt(i);
-        Lista nodeJ = getNodeAt(j);
-
-        if (nodeI == null || nodeJ == null) return;
-
-        // intercambio simple de los valores
-        ElementoLista tempValue = nodeI.value;
-        nodeI.value = nodeJ.value;
-        nodeJ.value = tempValue;
-
-        // recomputar índices (mantener igual comportamiento que remove)
-        recomputeIndices();
-    }
-
-    /**
-     * Recalcula los índices (ElementoLista.index) a partir del inicio de la lista.
-     * Llamar esto después de operaciones que cambien el orden o contenido.
-     */
-    private void recomputeIndices() {
-        Lista temp = this;
-        int idx = 0;
-        while (temp != null) {
-            if (temp.value != null) {
-                temp.value.setIndex(idx);
-                idx++;
+        if (this.value != null && aux ==(((PCB) value).getId())) {
+            return this.value.getIndex();
+        } else {
+            if (this.next != null) {
+                return this.next.indexOfPCB(value);
+            } else {
+                return -1;
             }
-            temp = temp.next;
         }
-        // update count to match number of non-null values (defensive)
-        this.count = idx;
     }
     
+    /*
+    public int indexOfProceso(Object value) {
+        int aux = ((Nodo) this.value.getValue()).getInfoProceso().getPcb().getId();
+
+        if (this.value != null && aux ==(((Nodo) value).getInfoProceso().getPcb().getId())) {
+            return this.value.getIndex();
+        } else {
+            if (this.next != null) {
+                return this.next.indexOfPCB(value);
+            } else {
+                return -1;
+            }
+        }
+    }
+    */
 }
