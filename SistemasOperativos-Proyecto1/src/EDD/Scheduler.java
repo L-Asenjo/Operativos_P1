@@ -31,7 +31,7 @@ public class Scheduler {
          
         if (readyQueue.getCount() > 0){
             var processToActivate = readyQueue.get(0);
-            PCB pcbOfActiveProcess = ((Nodo)processToActivate).getInfoPCB();
+            PCB pcbOfActiveProcess = ((PCB)processToActivate);
             
             // verificar si el proceso ya está activado y si no lo está, activarlo   
             if (!"running".equals(pcbOfActiveProcess.getStatus())){
@@ -65,7 +65,7 @@ public class Scheduler {
     public void SPN(Cola readyQueue, Dispatcher dispatcher){
         if (readyQueue.getCount() > 0){
             var processToActivate = readyQueue.get(0);
-            PCB pcbOfActiveProcess = ((Nodo)processToActivate).getInfoProceso().getPcb();
+            PCB pcbOfActiveProcess = ((PCB)processToActivate);
             
             // verificar si el proceso ya está activado y si no lo está, activarlo
             if (pcbOfActiveProcess.getStatus() != "running"){ //

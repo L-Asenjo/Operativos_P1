@@ -5,6 +5,7 @@
 package Interfaz;
 
 import EDD.Cola;
+import EDD.Device;
 import EDD.Dispatcher;
 import EDD.Lista;
 import EDD.PCB;
@@ -42,9 +43,9 @@ import javax.swing.WindowConstants;
 public class Interface extends javax.swing.JFrame {
 
     private Lista allQueue = new Lista();
-    private OS operativeSystem = new OS(new Scheduler(allQueue, 4000), new Dispatcher() );
+    private Lista devices = new Lista();
+    private OS operativeSystem = new OS(new Scheduler(allQueue, 4000, devices), new Dispatcher() );
     private boolean hasChanged = false;
-    private int currentPlanification;
     
     // inside class Interface:
     private JScrollPane suspendedBlockedScrollPane;        // replaces ScrollPane scrollPane13
@@ -412,13 +413,6 @@ public class Interface extends javax.swing.JFrame {
         global_clock1.setFont(new Font("Segoe UI", 0, 24)); // NOI18N
         global_clock1.setText("segundos");
 
-        jButton1.setText("jButton1");
-        jButton1.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
         GroupLayout sim_panelLayout = new GroupLayout(sim_panel);
         sim_panel.setLayout(sim_panelLayout);
         sim_panelLayout.setHorizontalGroup(sim_panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -722,8 +716,9 @@ public class Interface extends javax.swing.JFrame {
         int inst = ((Number) inst_amount.getValue()).intValue();
         int interruptCicleVal = ((Number) interrupt_cicle.getValue()).intValue();
         int interruptHandledVal = ((Number) interrupt_handled.getValue()).intValue();
+        Device nwq = new Device(1);
 
-        Proceso newProcess = new Proceso(getId(), name, type, inst, interruptCicleVal, interruptHandledVal);
+        Proceso newProcess = new Proceso(getId(), name, type, inst, interruptCicleVal, interruptHandledVal, 1);
 
         // add to scheduler/process list
         operativeSystem.getScheduler().getProcessList().add(newProcess);
@@ -764,17 +759,9 @@ public class Interface extends javax.swing.JFrame {
     private void create_process1ActionPerformed(ActionEvent evt) {//GEN-FIRST:event_create_process1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_create_process1ActionPerformed
-        
-    }//GEN-LAST:event_jButton1ActionPerformed
+
     private void generate_processesActionPerformed(ActionEvent evt) {//GEN-FIRST:event_generate_processesActionPerformed
-        generateProcess();
-        generateDevices();
-        OS.getScheduler().reorganiceFeedback(readyQueue, OS.getFeedbackList());
-        int i = 0;
-        while (readyQueue.getCount() > 0) {
-            OS.getScheduler().Feedback(3, readyQueue, OS.getFeedbackList(), OS.getDispatcher(), OS.getBlockedQueue());
-            i++;
-        }// TODO add your handling code here:
+        // TODO add your handling code here:
     }//GEN-LAST:event_generate_processesActionPerformed
 
     /**
@@ -804,11 +791,13 @@ public class Interface extends javax.swing.JFrame {
         }
         //</editor-fold>
         //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Interface().setVisible(true);                
+                new Interface().setVisible(true);
             }
         });
     }
@@ -855,6 +844,7 @@ public class Interface extends javax.swing.JFrame {
     private Label label11;
     private Label label12;
     private Label label13;
+    private Label label14;
     private Label label6;
     private Label label9;
     private Panel panel1;

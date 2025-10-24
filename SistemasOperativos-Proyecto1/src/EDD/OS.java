@@ -180,56 +180,12 @@ public class OS {
         return readyQueue;
     }
 
-    public Lista getProcessList() {
-        return processList;
-    }
-
-    public void setProcessList(Lista processList) {
-        this.processList = processList;
-    }
-
-    public Lista getProcessTable() {
-        return processTable;
-    }
-
-    public void setProcessTable(Lista processTable) {
-        this.processTable = processTable;
-    }
-
-    public Scheduler getScheduler() {
-        return scheduler;
-    }
-
-    public void setScheduler(Scheduler scheduler) {
-        this.scheduler = scheduler;
-    }
-
-    public Dispatcher getDispatcher() {
-        return dispatcher;
-    }
-
-    public void setDispatcher(Dispatcher dispatcher) {
-        this.dispatcher = dispatcher;
-    }
-
-    public int getMemorySpace() {
-        return memorySpace;
-    }
-
-    public void setMemorySpace(int memorySpace) {
-        this.memorySpace = memorySpace;
-    }
-
     public int getRemainingSpace() {
         return remainingSpace;
     }
 
     public void setRemainingSpace(int remainingSpace) {
         this.remainingSpace = remainingSpace;
-    }
-
-    public Cola getReadyQueue() {
-        return readyQueue;
     }
 
     public void setReadyQueue(Cola readyQueue) {
@@ -244,29 +200,6 @@ public class OS {
         this.longTermQueue = longTermQueue;
     }
 
-    public Lista getDeviceTable() {
-        return deviceTable;
-    }
-
-    public void setDeviceTable(Lista deviceTable) {
-        this.deviceTable = deviceTable;
-    }
-
-    public Lista getPriorityList() {
-        return priorityList;
-    }
-
-    public void setPriorityList(Lista priorityList) {
-        this.priorityList = priorityList;
-    }
-
-    public Lista getFeedbackList() {
-        return feedbackList;
-    }
-
-    public void setFeedbackList(Lista feedbackList) {
-        this.feedbackList = feedbackList;
-    }
 
     public Cola getBlockedQueue() {
         return blockedQueue;

@@ -120,6 +120,7 @@ public class Lista {
         } else {
             return 1 + this.next.count();
         } 
+        return 0;
     }
 
     /**
