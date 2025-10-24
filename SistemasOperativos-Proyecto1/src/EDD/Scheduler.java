@@ -313,7 +313,7 @@ public class Scheduler {
         }
     }
     
-    /*
+    
     public void reorganiceFeedback (Cola readyQueue, Lista readyQueueList) {
 
         if (readyQueueList.count() < getTimesIn(readyQueue)){
@@ -345,13 +345,13 @@ public class Scheduler {
         int i = 0;
         int n = readyQueue.getCount();
         while (i < n){
-            Nodo aux = (Nodo)readyQueue.get(i);
+            PCB aux = (PCB)readyQueue.get(i);
             int j = i + 1;
             
             while (j < n){
-                Nodo aux2 = (Nodo)readyQueue.get(j);
-                if (aux.getInfoPCB().getPriorityFSS()>aux2.getInfoPCB().getPriorityFSS()){
-                    swapNodes(aux, aux2);
+                PCB aux2 = (PCB)readyQueue.get(j);
+                if (aux.getPriorityFSS()>aux2.getPriorityFSS()){
+                    readyQueue.getQueue().swap(i, j);
                 }
                 j++;
             }
@@ -365,21 +365,21 @@ public class Scheduler {
         int timesInTotal = 0;
         int priorityCount = 0;
         while (i < n) {
-            if (((Nodo)readyQueue.get(i)).getInfoPCB().getPriority() == priority) {
-                timesInTotal = ((Nodo)readyQueue.get(i)).getInfoPCB().getTimesIn() + timesInTotal;
+            if (((PCB)readyQueue.get(i)).getPriority() == priority) {
+                timesInTotal = ((PCB)readyQueue.get(i)).getTimesIn() + timesInTotal;
                 priorityCount++;
             }
             i++;
         }
         i = 0;
         while (i < n) {
-            if (((Nodo)readyQueue.get(i)).getInfoPCB().getPriority() == priority) {
-                int priorityNode = ((Nodo)readyQueue.get(i)).getInfoPCB().getPriority();
-                int timesIn = ((Nodo)readyQueue.get(i)).getInfoPCB().getTimesIn();
+            if (((PCB)readyQueue.get(i)).getPriority() == priority) {
+                int priorityNode = ((PCB)readyQueue.get(i)).getPriority();
+                int timesIn = ((PCB)readyQueue.get(i)).getTimesIn();
                 
                 float newPriorityFSS = priorityNode + timesIn + (timesInTotal/priorityCount);
                 
-                ((Nodo)readyQueue.get(i)).getInfoPCB().setPriorityFSS(newPriorityFSS);
+                ((PCB)readyQueue.get(i)).setPriorityFSS(newPriorityFSS);
             }
             i++;
         }
@@ -390,13 +390,13 @@ public class Scheduler {
         int i = 0;
         int n = readyQueue.getCount();
         while (i < n){
-            Nodo aux = (Nodo)readyQueue.get(i);
+            PCB aux = (PCB)readyQueue.get(i);
             int j = i + 1;
             
             while (j < n){
-                Nodo aux2 = (Nodo)readyQueue.get(j);
-                if (aux.getInfoPCB().getPriorityFSS()>aux2.getInfoPCB().getPriorityFSS()){
-                    swapNodes(aux, aux2);
+                PCB aux2 = (PCB)readyQueue.get(j);
+                if (aux.getPriorityFSS() > aux2.getPriorityFSS()){
+                    readyQueue.getQueue().swap(i, j);
                 }
                 j++;
             }
@@ -404,7 +404,7 @@ public class Scheduler {
         }
     }
     
-    */
+    
     
     public int getPriorities(Cola readyQueue){
         Lista priorities = new Lista();

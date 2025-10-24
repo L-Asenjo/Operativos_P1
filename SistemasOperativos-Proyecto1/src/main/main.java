@@ -23,10 +23,10 @@ public class main {
         
         Interface1 menu = new Interface1();
         menu.setVisible(true);
-       // menu.runQuickAddDemo();
+        //menu.runQuickAddDemo();
         
-        exampleListaSwap();
-        exampleColaSwap();
+        //exampleListaSwap();
+        //exampleColaSwap();
         // TODO code application logic here
     }
     
