@@ -40,89 +40,210 @@ import javax.swing.WindowConstants;
  *
  * @author miche_ysmoa6e
  */
-public class Interface extends javax.swing.JFrame {
+public class Interface1 extends javax.swing.JFrame {
 
     private Lista allQueue = new Lista();
     private Lista devices = new Lista();
     private OS operativeSystem = new OS(new Scheduler(allQueue, 4000, devices), new Dispatcher() );
     private boolean hasChanged = false;
     
-    // inside class Interface:
-    private JScrollPane suspendedBlockedScrollPane;        // replaces ScrollPane scrollPane13
-    private javax.swing.JPanel suspendedBlockedContainer; // holds PanelProceso instances
+    private javax.swing.JPanel readyContainer;           // for jScrollPane3 (Cola de Listos)
+    private javax.swing.JPanel blockedContainer;         // for jScrollPane5 (Cola de Bloqueados)
+    private javax.swing.JPanel suspendedReadyContainer;  // for jScrollPane2 (Cola de Suspendidos Listos)
+    private javax.swing.JPanel suspendedBlockedContainer;// for jScrollPane4 (Cola de Suspendidos Bloqueados
         
     /**
      * Creates new form Interfacesp
      */
-    public Interface() {
+    public Interface1() {
         initComponents();
         setupScrollContainers();
-        jScrollPane4.setViewportView(suspendedBlockedContainer);
     }
 
     private void setupScrollContainers() {
-        // create container that will hold PanelProceso instances, vertical stacking
+        readyContainer = new javax.swing.JPanel();
+        readyContainer.setLayout(new BoxLayout(readyContainer, BoxLayout.Y_AXIS));
+        readyContainer.setOpaque(true);
+
+        blockedContainer = new javax.swing.JPanel();
+        blockedContainer.setLayout(new BoxLayout(blockedContainer, BoxLayout.Y_AXIS));
+        blockedContainer.setOpaque(true);
+
+        suspendedReadyContainer = new javax.swing.JPanel();
+        suspendedReadyContainer.setLayout(new BoxLayout(suspendedReadyContainer, BoxLayout.Y_AXIS));
+        suspendedReadyContainer.setOpaque(true);
+
         suspendedBlockedContainer = new javax.swing.JPanel();
         suspendedBlockedContainer.setLayout(new BoxLayout(suspendedBlockedContainer, BoxLayout.Y_AXIS));
         suspendedBlockedContainer.setOpaque(true);
-
-        // wrap the container in a JScrollPane
-        suspendedBlockedScrollPane = new JScrollPane(suspendedBlockedContainer,
-                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-
-        // If you must preserve the name "scrollPane13" used elsewhere, either rename or
-        // replace the AWT scrollPane13 in initComponents to be a JScrollPane.
-        // Example: add the suspendedBlockedScrollPane to your layout where scrollPane13 was used.
+        
+        if (jScrollPane3 != null) {
+            jScrollPane3.setViewportView(readyContainer);
+            jScrollPane3.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+            jScrollPane3.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        }
+        if (jScrollPane5 != null) {
+            jScrollPane5.setViewportView(blockedContainer);
+            jScrollPane5.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+            jScrollPane5.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        }
+        if (jScrollPane2 != null) {
+            jScrollPane2.setViewportView(suspendedReadyContainer);
+            jScrollPane2.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+            jScrollPane2.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        }
+        if (jScrollPane4 != null) {
+            jScrollPane4.setViewportView(suspendedBlockedContainer);
+            jScrollPane4.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+            jScrollPane4.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        }
+        
     }
     
-    public void addPanelProcesoToSuspendedBlocked(Proceso nodo) {
+    
+    /**
+     * Generic refresh helper to rebuild a container from a Cola (queue) that stores PCB objects.
+     * This rebuilds the whole container (removeAll + add each item) and schedules UI updates on the EDT.
+     */
+    private void refreshContainerFromQueue(final Cola queue, final JPanel container, final JScrollPane pane) {
+        // Ensure we're updating UI on the Event Dispatch Thread
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            container.removeAll();
+
+            if (queue == null || queue.getCount() < 1) {
+                container.revalidate();
+                container.repaint();
+                if (pane != null) {
+                    pane.revalidate();
+                    pane.repaint();
+                }
+                return;
+            }
+
+            for (int i = 0; i < queue.getCount(); i++) {
+                Object o = queue.get(i);
+                if (o == null) continue;
+
+                PCB pcb;
+                if (o instanceof PCB) {
+                    pcb = (PCB) o;
+                } else {
+                    // If stored object is a Proceso, get its PCB
+                    if (o instanceof Proceso) {
+                        pcb = ((Proceso) o).getPcb();
+                    } else {
+                        // unknown type: skip
+                        continue;
+                    }
+                }
+
+                PanelProceso p = new PanelProceso(pcb.getMar(), pcb.getPc(), pcb.getId(), pcb.getName(), pcb.getStatus());
+                // allow horizontal stretching so all panels align
+                p.setMaximumSize(new Dimension(Integer.MAX_VALUE, p.getPreferredSize().height));
+                container.add(p);
+                container.add(Box.createRigidArea(new Dimension(0, 8)));
+            }
+
+            container.revalidate();
+            container.repaint();
+            if (pane != null) {
+                pane.revalidate();
+                pane.repaint();
+            }
+        });
+    }
+
+    // Convenience methods to refresh specific queues
+    public void refreshReadyList(Cola readyQueue) {
+        refreshContainerFromQueue(readyQueue, readyContainer, jScrollPane3);
+    }
+
+    public void refreshBlockedList(Cola blockedQueue) {
+        refreshContainerFromQueue(blockedQueue, blockedContainer, jScrollPane5);
+    }
+
+    public void refreshSuspendedReadyList(Cola suspendedReadyQueue) {
+        refreshContainerFromQueue(suspendedReadyQueue, suspendedReadyContainer, jScrollPane2);
+    }
+
+    public void refreshSuspendedBlockedList(Cola suspendedBlockedQueue) {
+        refreshContainerFromQueue(suspendedBlockedQueue, suspendedBlockedContainer, jScrollPane4);
+    }
+    
+    
+    public void addPanelProceso(Proceso nodo) {
         if (nodo == null) return;
 
-        // adapt getters to your classes
-        int mars = nodo.getPcb().getMar();   // change method names as necessary
-        int pc = nodo.getPcb().getPc();
-        int id = nodo.getPcb().getId();
-        String name = nodo.getPcb().getName();
-        String status = nodo.getPcb().getStatus();
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            PCB pcb = nodo.getPcb();
+            if (pcb == null) return;
 
-        PanelProceso p = new PanelProceso(mars, pc, id, name, status);
-
-        // optional: set a fixed width so panels align; adjust as needed
-        //p.setMaximumSize(new Dimension(Integer.MAX_VALUE, p.getPreferredSize().height));
-
-        suspendedBlockedContainer.add(p);
-        suspendedBlockedContainer.add(Box.createRigidArea(new Dimension(0, 8))); // vertical spacing
-        suspendedBlockedContainer.revalidate(); // re-layout
-        suspendedBlockedContainer.repaint();    // paint new child
-    }
-    
-   // remove the flag entirely: rebuild on every call
-    public void refreshSuspendedBlockedList(Cola stateQueue) {
-        suspendedBlockedContainer.removeAll();
-
-        if (stateQueue == null || stateQueue.getCount() < 1) {
-            suspendedBlockedContainer.revalidate();
-            suspendedBlockedContainer.repaint();
-            return;
-        }
-
-        for (int i = 0; i < stateQueue.getCount(); i++) {
-            Object o = stateQueue.get(i);
-            if (o == null) continue;
-
-            PCB pcb = (PCB) o;
             PanelProceso p = new PanelProceso(pcb.getMar(), pcb.getPc(), pcb.getId(), pcb.getName(), pcb.getStatus());
             p.setMaximumSize(new Dimension(Integer.MAX_VALUE, p.getPreferredSize().height));
-            suspendedBlockedContainer.add(p);
-            suspendedBlockedContainer.add(Box.createRigidArea(new Dimension(0, 8)));
+
+            // decide which container to add to
+            JPanel targetContainer = getContainerForStatus(pcb.getStatus());
+            JScrollPane targetScroll = getScrollPaneForContainer(targetContainer);
+
+            targetContainer.add(p);
+            targetContainer.add(Box.createRigidArea(new Dimension(0, 8)));
+
+            targetContainer.revalidate();
+            targetContainer.repaint();
+
+            if (targetScroll != null) {
+                targetScroll.revalidate();
+                targetScroll.repaint();
+            }
+        });
+    }
+    
+    private JPanel getContainerForStatus(String status) {
+        String s = (status == null) ? "" : status.toLowerCase().trim();
+
+        boolean suspended = s.contains("suspend") || s.contains("suspendido") || s.contains("suspendidos") || s.contains("suspendidos");
+        boolean blocked = s.contains("block") || s.contains("bloque") || s.contains("bloqueado") || s.contains("bloqueados");
+        boolean ready = s.contains("ready") || s.contains("listo") || s.contains("listos");
+
+        // specific: suspended + blocked -> suspendedBlockedContainer
+        if (suspended && blocked) {
+            if (suspendedBlockedContainer == null) setupScrollContainers();
+            return suspendedBlockedContainer;
         }
 
-        suspendedBlockedContainer.revalidate();
-        suspendedBlockedContainer.repaint();
-        jScrollPane4.revalidate();
-        jScrollPane4.repaint();
+        // suspended (but not blocked) -> suspendedReadyContainer
+        if (suspended) {
+            if (suspendedReadyContainer == null) setupScrollContainers();
+            return suspendedReadyContainer;
+        }
+
+        // blocked (but not suspended) -> blockedContainer
+        if (blocked) {
+            if (blockedContainer == null) setupScrollContainers();
+            return blockedContainer;
+        }
+
+        // ready/listo OR unknown -> readyContainer (default)
+        if (ready) {
+            if (readyContainer == null) setupScrollContainers();
+            return readyContainer;
+        }
+
+        // fallback default
+        if (readyContainer == null) setupScrollContainers();
+        return readyContainer;
     }
+    
+    private JScrollPane getScrollPaneForContainer(JPanel container) {
+        if (container == null) return null;
+        if (container == readyContainer) return jScrollPane3;
+        if (container == blockedContainer) return jScrollPane5;
+        if (container == suspendedReadyContainer) return jScrollPane2;
+        if (container == suspendedBlockedContainer) return jScrollPane4;
+        return null;
+    }
+    
+    
 
     public int getId(){
         int id;
@@ -134,6 +255,41 @@ public class Interface extends javax.swing.JFrame {
         }
         return id;
     }
+    
+    
+    // FOR TESTING 
+    public void runQuickAddDemo() {
+    // Make sure called on EDT
+    javax.swing.SwingUtilities.invokeLater(() -> {
+        // create test Proceso objects using the same constructor you already used in create_processActionPerformed
+        // Adjust arguments to match your Proceso constructor if needed
+        Proceso p1 = new Proceso(getId(), "ready", "TypeA", 10, 0, 0, 1);   // expected Ready
+        Proceso p2 = new Proceso(getId(), "blocked", "TypeB", 20, 0, 0, 1); // expected Blocked
+        Proceso p3 = new Proceso(getId(), "suspendedReady", "TypeC", 15, 0, 0, 1); // expected Suspended
+        Proceso p4 = new Proceso(getId(), "suspendedBlocked", "TypeD", 30, 0, 0, 1); // expected Suspended Blocked
+
+        // If your Proceso/PCB has setters for status, set them explicitly so the routing rules work:
+        // e.g., p1.getPcb().setStatus("Ready");
+        // p2.getPcb().setStatus("Blocked");
+        // p3.getPcb().setStatus("Suspended");
+        // p4.getPcb().setStatus("Suspended Blocked");
+
+        // If your constructor already determines status, skip the explicit setStatus calls.
+
+        addPanelProceso(p1);
+        addPanelProceso(p2);
+        addPanelProceso(p3);
+        addPanelProceso(p4);
+    });
+
+    }
+    
+    public int getReadyContainerCount()       { return readyContainer == null ? 0 : readyContainer.getComponentCount(); }
+    public int getBlockedContainerCount()     { return blockedContainer == null ? 0 : blockedContainer.getComponentCount(); }
+    public int getSuspReadyContainerCount()   { return suspendedReadyContainer == null ? 0 : suspendedReadyContainer.getComponentCount(); }
+    public int getSuspBlockedContainerCount() { return suspendedBlockedContainer == null ? 0 : suspendedBlockedContainer.getComponentCount(); }
+    
+
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -730,25 +886,7 @@ public class Interface extends javax.swing.JFrame {
         
         // decide ready or suspended (this enqueues the PCB)
         operativeSystem.canBeReady(newProcess, operativeSystem.getReadyQueue(), operativeSystem.getSuspendedReadyQueue());
-
-        System.out.println("sss");
-        // Update UI on EDT
-        javax.swing.SwingUtilities.invokeLater(() -> {
-            // refresh only the queue you changed: if you enqueued into readyQueue show readyQueue
-            refreshSuspendedBlockedList(operativeSystem.getReadyQueue());
-        });
-
-        System.out.println("amel");
-        // Run scheduler in background to avoid blocking the GUI
-        new Thread(() -> {
-            operativeSystem.executeRoundRobin();
-            // after scheduler finishes/changes, update UI again on EDT
-            javax.swing.SwingUtilities.invokeLater(() -> {
-                refreshSuspendedBlockedList(operativeSystem.getReadyQueue());
-                // and update other queues/panels if required
-            });
-        }).start();
-        System.out.println("jij");
+        
     }//GEN-LAST:event_create_processActionPerformed
 
     private void save_policyActionPerformed(ActionEvent evt) {//GEN-FIRST:event_save_policyActionPerformed
@@ -762,7 +900,8 @@ public class Interface extends javax.swing.JFrame {
     private void generate_processesActionPerformed(ActionEvent evt) {//GEN-FIRST:event_generate_processesActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_generate_processesActionPerformed
-
+    
+    
     /**
      * @param args the command line arguments
      */
@@ -780,25 +919,23 @@ public class Interface extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Interface.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Interface1.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Interface.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Interface1.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Interface.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Interface1.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Interface.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Interface1.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Interface().setVisible(true);
+                new Interface1().setVisible(true);
             }
         });
+               
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -115,6 +115,7 @@ public class Scheduler {
         }
     }
     
+    
     public void Feedback(int setQuantum, Cola readyQueue, Lista readyQueueList, Dispatcher dispatcher, Cola blockedQueue) {
         System.out.println("en feedback");
         int quantum = setQuantum;
@@ -277,25 +278,42 @@ public class Scheduler {
         return priorityList;
     }
     
-    /*
     public void reorganiceSPN(Cola readyQueue){
-        for (int i = 0; i < readyQueue.getCount()-1; i++){
-            
-            Nodo first = (Nodo)readyQueue.get(i);
-            Nodo next = (Nodo)readyQueue.get(i+1);
-            if (first == null || next == null){break;}
-            
-            Proceso actualProcess = first.getInfoProceso();
-            Proceso nextProcess = next.getInfoProceso();
-            if (actualProcess == null || nextProcess == null){break;}
+        if (readyQueue == null) return;
+        if (readyQueue.getQueue() == null) return;
+        if (readyQueue.getCount() < 2) return;
+        
+        synchronized (readyQueue.getQueue()) {
+            for (int pass = 0; pass < readyQueue.getCount() - 1; pass++) {
+                boolean swapped = false;
+                for (int i = 0; i < readyQueue.getCount() - 1 - pass; i++) {
+                    Object o1 = readyQueue.getQueue().get(i);
+                    Object o2 = readyQueue.getQueue().get(i + 1);
 
-            // Se intercambian los procesos dentro de los nodos
-            if (actualProcess.getProcessingTime() > nextProcess.getProcessingTime()){
-                swapNodes(first, next);
+                    if (!(o1 instanceof PCB) || !(o2 instanceof PCB)) {
+                        continue;
+                    }
+
+                    PCB pcb1 = (PCB) o1;
+                    PCB pcb2 = (PCB) o2;
+                    Proceso p1 = findProcessByPCB(pcb1);
+                    Proceso p2 = findProcessByPCB(pcb2);
+
+                    // If either Proceso is missing, skip this pair
+                    if (p1 == null || p2 == null) continue;
+
+                    // Compare processing time and swap underlying list if out of order
+                    if (p1.getProcessingTime() > p2.getProcessingTime()) {
+                        readyQueue.getQueue().swap(i, i + 1);
+                        swapped = true;
+                    }
+                }
+                if (!swapped) break; // already sorted
             }
         }
     }
     
+    /*
     public void reorganiceFeedback (Cola readyQueue, Lista readyQueueList) {
 
         if (readyQueueList.count() < getTimesIn(readyQueue)){
@@ -385,7 +403,9 @@ public class Scheduler {
             i++;
         }
     }
+    
     */
+    
     public int getPriorities(Cola readyQueue){
         Lista priorities = new Lista();
         
@@ -412,26 +432,6 @@ public class Scheduler {
         return timesIn.count();
     }
     
-    /*
-    public void swapNodes(Nodo first, Nodo next){
-        // Intercambio de procesos
-        Proceso auxProcess = first.getInfoProceso();
-        first.setInfoProceso(next.getInfoProceso());
-        next.setInfoProceso(auxProcess);
-        
-        // Intercambio de PCB
-        PCB auxPBC = first.getInfoPCB();
-        first.setInfoPCB(next.getInfoPCB());
-        next.setInfoPCB(auxPBC);
-        
-        // Intercambio de Device
-        Device auxDevice = first.getInfoDevice();
-        first.setInfoDevice(next.getInfoDevice());
-        next.setInfoDevice(auxDevice);
-    }
-    */
-    
-
     /**
      * @return the processList
      */
@@ -500,6 +500,23 @@ public class Scheduler {
              // this part is executed when an exception (in this example InterruptedException) occurs
              System.out.println("en catch" + e);
         }
+    }
+    
+     public Proceso findProcessByPCB(PCB pcb) {
+        if (pcb == null) return null;
+
+        int n = (processList == null) ? 0 : processList.count();
+        for (int i = 0; i < n; i++) {
+            Object o = processList.get(i);
+            if (o instanceof Proceso) {
+                Proceso p = (Proceso) o;
+                PCB ppcb = p.getPcb();
+                if (ppcb != null && ppcb.getId() == pcb.getId()) {
+                    return p;
+                }
+            }
+        }
+        return null;
     }
     
 }

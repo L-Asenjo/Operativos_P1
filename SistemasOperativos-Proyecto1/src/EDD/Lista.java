@@ -200,6 +200,68 @@ public class Lista {
                     return -1;
                 }
             }
+    }
+    
+    private Lista getNodeAt(int index) {
+        if (index < 0 || index >= count()) return null;
+        Lista current = this;
+        int i = 0;
+        while (i < index) {
+            current = current.next;
+            i++;
+        }
+        return current;
+    }
+
+    /**
+     * Intercambia los valores almacenados en los nodos de índice i y j.
+     * Actualiza los índices de ElementoLista para mantener consistencia.
+     *
+     * @param i índice del primer elemento
+     * @param j índice del segundo elemento
+     */
+    public void swap(int i, int j) {
+        if (i == j) return; // nada que hacer
+        if (i < 0 || j < 0) return;
+        if (i >= count() || j >= count()) return;
+
+        // asegurar que i < j para simplificar
+        if (i > j) {
+            int tmp = i;
+            i = j;
+            j = tmp;
         }
 
+        Lista nodeI = getNodeAt(i);
+        Lista nodeJ = getNodeAt(j);
+
+        if (nodeI == null || nodeJ == null) return;
+
+        // intercambio simple de los valores
+        ElementoLista tempValue = nodeI.value;
+        nodeI.value = nodeJ.value;
+        nodeJ.value = tempValue;
+
+        // recomputar índices (mantener igual comportamiento que remove)
+        recomputeIndices();
+    }
+
+    /**
+     * Recalcula los índices (ElementoLista.index) a partir del inicio de la lista.
+     * Llamar esto después de operaciones que cambien el orden o contenido.
+     */
+    private void recomputeIndices() {
+        Lista temp = this;
+        int idx = 0;
+        while (temp != null) {
+            if (temp.value != null) {
+                temp.value.setIndex(idx);
+                idx++;
+            }
+            temp = temp.next;
+        }
+        // update count to match number of non-null values (defensive)
+        this.count = idx;
+    }
+    
 }
