@@ -44,6 +44,7 @@ public class Interface extends javax.swing.JFrame {
     private Lista allQueue = new Lista();
     private OS operativeSystem = new OS(new Scheduler(allQueue, 4000), new Dispatcher() );
     private boolean hasChanged = false;
+    private int currentPlanification;
     
     // inside class Interface:
     private JScrollPane suspendedBlockedScrollPane;        // replaces ScrollPane scrollPane13
@@ -411,6 +412,13 @@ public class Interface extends javax.swing.JFrame {
         global_clock1.setFont(new Font("Segoe UI", 0, 24)); // NOI18N
         global_clock1.setText("segundos");
 
+        jButton1.setText("jButton1");
+        jButton1.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         GroupLayout sim_panelLayout = new GroupLayout(sim_panel);
         sim_panel.setLayout(sim_panelLayout);
         sim_panelLayout.setHorizontalGroup(sim_panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -756,9 +764,17 @@ public class Interface extends javax.swing.JFrame {
     private void create_process1ActionPerformed(ActionEvent evt) {//GEN-FIRST:event_create_process1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_create_process1ActionPerformed
-
+        
+    }//GEN-LAST:event_jButton1ActionPerformed
     private void generate_processesActionPerformed(ActionEvent evt) {//GEN-FIRST:event_generate_processesActionPerformed
-        // TODO add your handling code here:
+        generateProcess();
+        generateDevices();
+        OS.getScheduler().reorganiceFeedback(readyQueue, OS.getFeedbackList());
+        int i = 0;
+        while (readyQueue.getCount() > 0) {
+            OS.getScheduler().Feedback(3, readyQueue, OS.getFeedbackList(), OS.getDispatcher(), OS.getBlockedQueue());
+            i++;
+        }// TODO add your handling code here:
     }//GEN-LAST:event_generate_processesActionPerformed
 
     /**
@@ -792,7 +808,7 @@ public class Interface extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Interface().setVisible(true);
+                new Interface().setVisible(true);                
             }
         });
     }
@@ -839,7 +855,6 @@ public class Interface extends javax.swing.JFrame {
     private Label label11;
     private Label label12;
     private Label label13;
-    private Label label14;
     private Label label6;
     private Label label9;
     private Panel panel1;

@@ -15,19 +15,28 @@ public class Dispatcher {
     
     public void activate(PCB pcb, Lista procesos) {
         int i = 0;
-        var procesoAux = procesos.get(i);
+        Proceso procesoAux = null;
         while (i < procesos.count()){
+            procesoAux = (Proceso)procesos.get(i);
             if (pcb.getId() == ((Proceso)procesos.get(i)).getPcb().getId()){
-                procesoAux = procesos.get(i);
+                procesoAux = (Proceso)procesos.get(i);
                 break;
             } else {
                 i++;
             } 
         }
         
-        ((Proceso) procesoAux).getPcb().setStatus("running");
-        ((Proceso) procesoAux).run();
-        
+        procesoAux.getPcb().setStatus("running");
+        System.out.println("status setteado: " + procesoAux.getPcb().getStatus());
+        System.out.println("id del proceso setteado: " + procesoAux.getPcb().getId());
+        if (procesoAux.getTotalTimeSpent() > 0){
+            synchronized (procesoAux) {
+            // Notifica al hilo que estaba en wait() para que salga del bloqueo
+            procesoAux.notify(); 
+            }
+        }else{
+            procesoAux.start();
+        }
     }
     
     public Proceso deactivate(Proceso activeProcess) {
@@ -38,10 +47,12 @@ public class Dispatcher {
     
     public Proceso getActiveProcess(Lista procesos){
         int i = 0;
-        var procesoAux = procesos.get(i);
+        Proceso procesoAux = null;
         while (i < procesos.count()){
-            if (((Proceso)procesoAux).getPcb().getStatus() == "running"){
-                procesoAux = procesos.get(i);
+            procesoAux = (Proceso) procesos.get(i);
+            System.out.println("proceso aux running?: " + procesoAux.getPcb().getStatus());
+            if (procesoAux.getPcb().getStatus() == "running"){
+                procesoAux = (Proceso) procesos.get(i);
                 break;
             } else {
                 i++;

@@ -4,20 +4,23 @@
  */
 package EDD;
 
+
+import java.util.concurrent.Semaphore;
+
 /**
  *
  * @author miche_ysmoa6e
  */
 public class Device {
     private int id;
-    private Semaforo semaf;
+    private Semaphore semaf;
 
     public Device(int id) {
         this.id = id;
-        this.semaf = new Semaforo();
+        this.semaf = new Semaphore(1);
     }
 
-    public Semaforo getSemaf() {
+    public Semaphore getSemaf() {
         return semaf;
     }
     /**
