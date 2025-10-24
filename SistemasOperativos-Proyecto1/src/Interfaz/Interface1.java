@@ -44,10 +44,10 @@ import javax.swing.WindowConstants;
  */
 public class Interface1 extends javax.swing.JFrame {
 
-    private Lista allQueue = new Lista();
-    private Lista devices = new Lista();
-    private OS operativeSystem = new OS(new Scheduler(allQueue, 4000, devices), new Dispatcher() );
+    private OS operativeSystem = new OS(4000);
     private boolean hasChanged = false;
+   // private Lista devices = operativeSystem.getDeviceTable();    //---> No creo que sea necesario, se accede directamente a lo que está dentro del sistema operativo
+   // private Lista processList = operativeSystem.getProcessList();
     
     private javax.swing.JPanel readyContainer;           // for jScrollPane3 (Cola de Listos)
     private javax.swing.JPanel blockedContainer;         // for jScrollPane5 (Cola de Bloqueados)
@@ -60,7 +60,15 @@ public class Interface1 extends javax.swing.JFrame {
     public Interface1() {
         initComponents();
         setupScrollContainers();
-        registerQueueListeners(); 
+        registerQueueListeners();
+        new Thread(() -> {
+            operativeSystem.executePlanification();
+            // after scheduler finishes/changes, update UI again on EDT
+            javax.swing.SwingUtilities.invokeLater(() -> {
+                refreshSuspendedBlockedList(operativeSystem.getReadyQueue());
+                // and update other queues/panels if required
+            });
+        }).start();
     }
 
     private void setupScrollContainers() {
@@ -98,8 +106,8 @@ public class Interface1 extends javax.swing.JFrame {
             jScrollPane4.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         }
         
-        process_type.add("IO bound");
-        process_type.add("CPU bound");
+        process_type.add("I/O Bound");
+        process_type.add("CPU Bound");
         
         planification_choose.add("Round Robin"); //0
         planification_choose.add("Priority Planification"); //1
@@ -262,32 +270,34 @@ public class Interface1 extends javax.swing.JFrame {
     }
     
     private JPanel getContainerForStatus(String status) {
-        String s = (status == null) ? "" : status.toLowerCase().trim();
-
-        boolean suspended = s.contains("suspended") || s.contains("suspendido") || s.contains("suspendidos") || s.contains("suspendidos");
-        boolean blocked = s.contains("block") || s.contains("bloque") || s.contains("bloqueado") || s.contains("bloqueados");
-        boolean ready = s.contains("ready") || s.contains("listo") || s.contains("listos");
-
+        
+        /*
+        boolean suspendedReady = status.contains("suspendedReady") ;
+        boolean suspendedBlocked = status.contains("suspendedBlocked") ;
+        boolean blocked = status.contains("blocked");
+        boolean ready = status.contains("ready") ;
+        */
+        
         // specific: suspended + blocked -> suspendedBlockedContainer
-        if (suspended && blocked) {
+        if (status.equals("suspendedBlocked")) {
             if (suspendedBlockedContainer == null) setupScrollContainers();
             return suspendedBlockedContainer;
         }
 
         // suspended (but not blocked) -> suspendedReadyContainer
-        if (suspended) {
+        if (status.equals("suspendedReady")) {
             if (suspendedReadyContainer == null) setupScrollContainers();
             return suspendedReadyContainer;
         }
 
         // blocked (but not suspended) -> blockedContainer
-        if (blocked) {
+        if (status.equals("blocked")) {
             if (blockedContainer == null) setupScrollContainers();
             return blockedContainer;
         }
 
         // ready/listo OR unknown -> readyContainer (default)
-        if (ready) {
+        if (status.equals("ready")) {
             if (readyContainer == null) setupScrollContainers();
             return readyContainer;
         }
@@ -311,14 +321,27 @@ public class Interface1 extends javax.swing.JFrame {
     public int getId(){
         int id;
 
-        if (allQueue.count() > 0){
-            id = allQueue.count() +1;
+        if (operativeSystem.getProcessList().count() > 0){
+            id = operativeSystem.getProcessList().count() +1;
         } else {
             id = 1;
         }
         return id;
     }
     
+    public void addProcessToSystem(Proceso process){
+    
+        if (operativeSystem.canBeReady(process) == true){
+            operativeSystem.getReadyQueue().enqueue(process);
+        } else {
+            operativeSystem.getSuspendedReadyQueue().enqueue(process);
+        }
+        
+        operativeSystem.getProcessList().add(process);
+        
+        System.out.println(operativeSystem.getReadyQueue().getCount());
+        System.out.println(operativeSystem.getSuspendedReadyQueue().getCount());
+    }
     
     // FOR TESTING 
     public void runQuickAddDemo() {
@@ -326,23 +349,19 @@ public class Interface1 extends javax.swing.JFrame {
     javax.swing.SwingUtilities.invokeLater(() -> {
         // create test Proceso objects using the same constructor you already used in create_processActionPerformed
         // Adjust arguments to match your Proceso constructor if needed
-        Proceso p1 = new Proceso(getId(), "ready", "TypeA", 10, 0, 0, 1);   // expected Ready
-        Proceso p2 = new Proceso(getId(), "blocked", "TypeB", 20, 0, 0, 1); // expected Blocked
-        Proceso p3 = new Proceso(getId(), "suspendedReady", "TypeC", 15, 0, 0, 1); // expected Suspended
-        Proceso p4 = new Proceso(getId(), "suspendedBlocked", "TypeD", 30, 0, 0, 1); // expected Suspended Blocked
-
-        // If your Proceso/PCB has setters for status, set them explicitly so the routing rules work:
+        Proceso p1 = new Proceso(getId(), "Proceso "+getId(), "I/O Bound", 10, 0, 0, 1,1);   // expected Ready
         p1.getPcb().setStatus("ready");
+        addProcessToSystem(p1);
+        Proceso p2 = new Proceso(getId(), "Proceso "+getId(), "CPU Bound", 20, 0, 0, 1,1); // expected Blocked
         p2.getPcb().setStatus("blocked");
+        addProcessToSystem(p2);
+        Proceso p3 = new Proceso(getId(), "Proceso "+getId(), "I/O Bound", 15, 0, 0, 1,1); // expected Suspended
         p3.getPcb().setStatus("suspendedReady");
+        addProcessToSystem(p3);
+        Proceso p4 = new Proceso(getId(), "Proceso "+getId(), "CPU Bound", 30, 0, 0, 1,1); // expected Suspended Blocked
         p4.getPcb().setStatus("suspendedBlocked");
+        addProcessToSystem(p4);
 
-        // If your constructor already determines status, skip the explicit setStatus calls.
-
-        addPanelProceso(p1);
-        addPanelProceso(p2);
-        addPanelProceso(p3);
-        addPanelProceso(p4);
     });
 
     }
@@ -954,19 +973,11 @@ public class Interface1 extends javax.swing.JFrame {
         int interruptHandledVal = ((Number) interrupt_handled.getValue()).intValue();
         int device = process_device.getSelectedIndex();
 
-        Proceso newProcess = new Proceso(getId(), "Proceso "+getId(), type, inst, interruptCicleVal, interruptHandledVal, device);
+        Proceso newProcess = new Proceso(getId(), "Proceso "+getId(), type, inst, interruptCicleVal, interruptHandledVal, device, priority);
 
-        // add to scheduler/process list
-        operativeSystem.getScheduler().getProcessList().add(newProcess);
-
-        System.out.println(newProcess.getPcb().getId());
-        System.out.println(newProcess.getPcb().getMar());
-        System.out.println(newProcess.getPcb().getName());
-        System.out.println(newProcess.getPcb().getPc());
-        System.out.println(newProcess.getPcb().getStatus());
-        
+        addProcessToSystem(newProcess);
         // decide ready or suspended (this enqueues the PCB)
-        operativeSystem.canBeReady(newProcess, operativeSystem.getReadyQueue(), operativeSystem.getSuspendedReadyQueue());
+        
         
     }//GEN-LAST:event_create_processActionPerformed
 

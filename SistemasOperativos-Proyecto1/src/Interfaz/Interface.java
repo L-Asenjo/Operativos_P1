@@ -44,7 +44,7 @@ public class Interface extends javax.swing.JFrame {
 
     private Lista allQueue = new Lista();
     private Lista devices = new Lista();
-    private OS operativeSystem = new OS(new Scheduler(allQueue, 4000, devices), new Dispatcher() );
+    private OS operativeSystem = new OS(4000);
     private boolean hasChanged = false;
     
     // inside class Interface:
