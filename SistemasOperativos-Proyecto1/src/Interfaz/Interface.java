@@ -626,10 +626,11 @@ public class Interface extends javax.swing.JFrame {
         // TODO add your handling code here:
         generateProcess();
         generateDevices();
-        OS.getScheduler().reorganiceFeedback(readyQueue, OS.getFeedbackList());
+        /*OS.getScheduler().reorganiceFeedback(readyQueue, OS.getFeedbackList());*/
         int i = 0;
         while (readyQueue.getCount() > 0) {
-            OS.getScheduler().Feedback(3, readyQueue, OS.getFeedbackList(), OS.getDispatcher(), OS.getBlockedQueue());
+//            OS.getScheduler().Feedback(3, readyQueue, OS.getFeedbackList(), OS.getDispatcher(), OS.getBlockedQueue());
+            OS.getScheduler().RoundRobin(3, readyQueue, OS.getDispatcher(), OS.getBlockedQueue());
             i++;
         }
         
