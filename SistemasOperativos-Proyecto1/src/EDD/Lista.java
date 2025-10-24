@@ -21,12 +21,12 @@ public class Lista {
     /**
      * Procedimiento para agregar un objeto en la lista
      *
-     * @param j Elemento a agregar a la lista.
+     * @param value1 Proceso
      */
-    public void add(Object j) {
-        if (j != null) {
+    public void add(Object value1) {
+        if (value1 != null) {
             ElementoLista newValue = new ElementoLista();
-            newValue.setValue(j);
+            newValue.setValue(value1);
             newValue.setIndex(count);
 
             if (this.value == null) {
@@ -43,6 +43,7 @@ public class Lista {
             count++;
         }
     }
+
 
     /**
      * Función para obtener un elemento según su índice dentro de la lista
@@ -111,12 +112,14 @@ public class Lista {
     public int count() {
         if (this.value == null) {
             return 0;
-        } else if (this.next == null){
+        } 
+        
+        if (this.next == null) {
             return 1;
-        }
-        else {
+        } else if (this.next == null){
+        } else {
             return 1 + this.next.count();
-        }
+        } 
     }
 
     /**
@@ -139,11 +142,8 @@ public class Lista {
         }
     }
 
-    /**
-     * Procedimiento para contener la metadata de los elementos una lista de nodos.
-     * 
-     * @return String con la información indicada.
-     */
+    /*
+    
     public String printList() {
         String txt = "";
         
@@ -156,7 +156,9 @@ public class Lista {
         }
         return txt;
     }
-
+    
+    */
+    
     /**
      * Función para verificar si un objeto se encuentra dentro de la lista.
      *
@@ -175,6 +177,7 @@ public class Lista {
         }
     }
 
+    /*
     /**
      
     Función para obtener el índice de un elemento dentro de la lista.*
