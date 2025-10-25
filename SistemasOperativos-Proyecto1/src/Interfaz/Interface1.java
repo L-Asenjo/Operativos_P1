@@ -356,12 +356,15 @@ public class Interface1 extends javax.swing.JFrame {
         Proceso p1 = new Proceso(getId(), "Proceso "+getId(), "I/O Bound", 10, 0, 0, 1,1);   // expected Ready
         p1.getPcb().setStatus("ready");
         addProcessToSystem(p1);
+        
         Proceso p2 = new Proceso(getId(), "Proceso "+getId(), "CPU Bound", 20, 0, 0, 1,1); // expected Blocked
         p2.getPcb().setStatus("blocked");
         addProcessToSystem(p2);
+        
         Proceso p3 = new Proceso(getId(), "Proceso "+getId(), "I/O Bound", 15, 0, 0, 1,1); // expected Suspended
         p3.getPcb().setStatus("suspendedReady");
         addProcessToSystem(p3);
+        
         Proceso p4 = new Proceso(getId(), "Proceso "+getId(), "CPU Bound", 30, 0, 0, 1,1); // expected Suspended Blocked
         p4.getPcb().setStatus("suspendedBlocked");
         addProcessToSystem(p4);

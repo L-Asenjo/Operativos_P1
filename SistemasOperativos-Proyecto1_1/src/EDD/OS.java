@@ -10,13 +10,12 @@ package EDD;
  */
 public class OS {
 
-    private Lista processList = new Lista();
+    private Lista processList;
     private Lista processTable = new Lista();
     private Lista deviceTable = new Lista();
-    private int memorySpace = 4000;
     private Scheduler scheduler;
-    private Dispatcher dispatcher = new Dispatcher();
-    private int remainingSpace = memorySpace;
+    private Dispatcher dispatcher;
+    private int memorySpace = 4000;
     private Lista priorityList = new Lista();
     private Lista feedbackList = new Lista();
     private Cola readyQueue = new Cola();
@@ -25,8 +24,6 @@ public class OS {
     private Cola suspendedReadyQueue = new Cola();
     private Cola suspendedBlockedQueue = new Cola();
     private Lista terminatedProcessList = new Lista();
-    private int currentPlanification = 0;
-    private int quantum = 3;
     
     public Cola fillReadyQueue(){
         //Cola readyQueue = new Cola();
@@ -41,63 +38,23 @@ public class OS {
         return getReadyQueue();
     }
 
-    public OS(int memorySpace) {
-        this.scheduler = new Scheduler(processList, memorySpace, deviceTable);
+    public OS(Scheduler scheduler, Dispatcher dispatcher) {
+        this.scheduler = scheduler;
+        this.dispatcher = dispatcher;
     }
     
     
-    public boolean canBeReady(Proceso process){
+    public boolean canBeReady(Proceso process, Cola readyQueue, Cola suspendedQueue){
     
-        int memory = getRemainingSpace() - process.getMemorySpace();
-        this.setRemainingSpace(memory);
-        System.out.println(memory);
-        
+        int memory = scheduler.getRemainingSpace() - process.getMemorySpace();
         if (memory > 0){
-            process.getPcb().setStatus("ready");
-            System.out.println("si");
+            readyQueue.enqueue(process.getPcb());
             return true;
         } else {
-            process.getPcb().setStatus("suspendedReady");
-            System.out.println("no");
+            suspendedQueue.enqueue(process.getPcb());
             return false;
         }
     }
-
-    public void executePriorityPlanification() {
-        scheduler.reorganicePriorityPlanification(readyQueue, priorityList);
-        scheduler.PriorityPlanification(quantum, readyQueue, dispatcher, priorityList, blockedQueue, terminatedProcessList);
-    }
-
-    public void executeSPN() {
-        scheduler.reorganiceSPN(readyQueue);
-        scheduler.SPN(readyQueue, dispatcher, blockedQueue, terminatedProcessList);
-    }
-
-    public void executeFeedback() {
-        scheduler.reorganiceFeedback(readyQueue, priorityList);
-        scheduler.Feedback(quantum, readyQueue, feedbackList, dispatcher, blockedQueue, terminatedProcessList);
-    }
-
-    public void executeFSS() {
-        scheduler.reorganicePriorityPlanification(readyQueue, priorityList);
-        int priorities = scheduler.getPriorities(readyQueue);
-        int i = 0;
-        while (i < priorities) {
-            int priority = ((PCB)((Cola)priorityList.get(i)).get(0)).getPriority();
-            scheduler.recalculateFSS(readyQueue, priority);
-        }
-        scheduler.reorganiceFSS(readyQueue);
-        scheduler.FSS(quantum, readyQueue, dispatcher, blockedQueue, terminatedProcessList);
-    }
-
-    public void executeSRT() {
-        scheduler.reorganiceSRT(readyQueue);
-        scheduler.SRT(readyQueue, dispatcher, blockedQueue, terminatedProcessList);
-    }
-    
-    public void executeRoundRobin(){
-        System.out.println(terminatedProcessList);
-        scheduler.RoundRobin(quantum, readyQueue, dispatcher, blockedQueue, terminatedProcessList);
     
 
     public void executeRoundRobin(){
@@ -222,79 +179,84 @@ public class OS {
         return readyQueue;
     }
 
-    public int getRemainingSpace() {
-        return remainingSpace;
-    }
-
-    public void setRemainingSpace(int remainingSpace) {
-        this.remainingSpace = remainingSpace;
-    }
-
+    /**
+     * @param readyQueue the readyQueue to set
+     */
     public void setReadyQueue(Cola readyQueue) {
         this.readyQueue = readyQueue;
     }
 
+    /**
+     * @return the longTermQueue
+     */
     public Cola getLongTermQueue() {
         return longTermQueue;
     }
 
+    /**
+     * @param longTermQueue the longTermQueue to set
+     */
     public void setLongTermQueue(Cola longTermQueue) {
         this.longTermQueue = longTermQueue;
     }
 
-
+    /**
+     * @return the blockedQueue
+     */
     public Cola getBlockedQueue() {
         return blockedQueue;
     }
 
+    /**
+     * @param blockedQueue the blockedQueue to set
+     */
     public void setBlockedQueue(Cola blockedQueue) {
         this.blockedQueue = blockedQueue;
     }
 
+    /**
+     * @return the suspendedReadyQueue
+     */
     public Cola getSuspendedReadyQueue() {
         return suspendedReadyQueue;
     }
 
+    /**
+     * @param suspendedReadyQueue the suspendedReadyQueue to set
+     */
     public void setSuspendedReadyQueue(Cola suspendedReadyQueue) {
         this.suspendedReadyQueue = suspendedReadyQueue;
     }
 
+    /**
+     * @return the suspendedBlockedQueue
+     */
     public Cola getSuspendedBlockedQueue() {
         return suspendedBlockedQueue;
     }
 
+    /**
+     * @param suspendedBlockedQueue the suspendedBlockedQueue to set
+     */
     public void setSuspendedBlockedQueue(Cola suspendedBlockedQueue) {
         this.suspendedBlockedQueue = suspendedBlockedQueue;
     }
 
+    /**
+     * @return the terminatedProcessList
+     */
     public Lista getTerminatedProcessList() {
         return terminatedProcessList;
     }
 
+    /**
+     * @param terminatedProcessList the terminatedProcessList to set
+     */
     public void setTerminatedProcessList(Lista terminatedProcessList) {
         this.terminatedProcessList = terminatedProcessList;
     }
-
-    public int getCurrentPlanification() {
-        return currentPlanification;
-    }
-
-    public void setCurrentPlanification(int currentPlanification) {
-        this.currentPlanification = currentPlanification;
-    }
-        
-    /**
-     * @return the quantum
-     */
-    public int getQuantum() {
-        return quantum;
-    }
-
-    /**
-     * @param quantum the quantum to set
-     */
-    public void setQuantum(int quantum) {
-        this.quantum = quantum;
-    }
+    
+    
+    
     
 }
