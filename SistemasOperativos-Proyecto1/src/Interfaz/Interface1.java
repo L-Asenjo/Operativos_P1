@@ -47,8 +47,8 @@ public class Interface1 extends javax.swing.JFrame {
 
     private OS operativeSystem = new OS(4000);
     private Timer terminatedTimer;
-    private Timer schedulerTimer;
     private int planification;
+    private boolean isSchedulerActive = false;
    // private Lista devices = operativeSystem.getDeviceTable();    //---> No creo que sea necesario, se accede directamente a lo que está dentro del sistema operativo
    // private Lista processList = operativeSystem.getProcessList();
     
@@ -71,10 +71,6 @@ public class Interface1 extends javax.swing.JFrame {
         terminatedTimer.setRepeats(true);
         terminatedTimer.start();
         
-        schedulerTimer = new Timer(1000, e -> startScheduler());
-        schedulerTimer.setRepeats(true);
-        schedulerTimer.start();
-
         // also do an initial immediate update
         updateTerminatedArea();
     }
@@ -340,9 +336,9 @@ public class Interface1 extends javax.swing.JFrame {
     public void addProcessToSystem(Proceso process){
     
         if (operativeSystem.canBeReady(process) == true){
-            operativeSystem.getReadyQueue().enqueue(process);
+            operativeSystem.getReadyQueue().enqueue(process.getPcb());
         } else {
-            operativeSystem.getSuspendedReadyQueue().enqueue(process);
+            operativeSystem.getSuspendedReadyQueue().enqueue(process.getPcb());
         }
         
         operativeSystem.getProcessList().add(process);
@@ -404,37 +400,28 @@ public class Interface1 extends javax.swing.JFrame {
         updateTerminatedArea();
     }
 
-    public void startScheduler(){
-            int selected = planification;
-            System.out.println("planificacion"+selected);
-            if (operativeSystem.getReadyQueue().getCount() > 0){
-                switch(selected){
-                    case 0 -> {
-                        operativeSystem.executeRoundRobin();
-                    }
-                    case 1 -> {
-                        operativeSystem.executePriorityPlanification();
-                    }
-                    case 2 -> {
-                        operativeSystem.executeSPN();
-                    }
-                    case 3 -> {
-                        operativeSystem.executeFeedback();
-                    }
-                    case 4 -> {
-                        operativeSystem.executeFSS();
-                    }
-                    case 5 -> {
-                        operativeSystem.executeSRT();
-                    }
-                }
-            }                      
-            // after scheduler finishes/changes, update UI again on EDT
-            javax.swing.SwingUtilities.invokeLater(() -> {
-                refreshSuspendedBlockedList(operativeSystem.getReadyQueue());
-                // and update other queues/panels if required
-            });
+    private void startSchedulerBackground() {
+    int selected = planification; // read atomic/volatile if planification can change concurrently
+    if (operativeSystem.getReadyQueue().getCount() > 0) {
+        switch (selected) {
+            case 0 -> operativeSystem.executeRoundRobin();
+            case 1 -> operativeSystem.executePriorityPlanification();
+            case 2 -> operativeSystem.executeSPN();
+            case 3 -> operativeSystem.executeFeedback();
+            case 4 -> operativeSystem.executeFSS();
+            case 5 -> operativeSystem.executeSRT();
+        }
     }
+    // only after scheduler finishes, post minimal UI updates to EDT:
+    javax.swing.SwingUtilities.invokeLater(() -> {
+        // refresh all relevant lists with the correct queues
+        refreshReadyList(operativeSystem.getReadyQueue());
+        refreshBlockedList(operativeSystem.getBlockedQueue());
+        refreshSuspendedReadyList(operativeSystem.getSuspendedReadyQueue());
+        refreshSuspendedBlockedList(operativeSystem.getSuspendedBlockedQueue());
+        updateTerminatedArea();
+    });
+}
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -953,7 +940,13 @@ public class Interface1 extends javax.swing.JFrame {
 
         addProcessToSystem(newProcess);
         // decide ready or suspended (this enqueues the PCB)
-
+        if (!isSchedulerActive) {
+            new Thread( () -> {
+                startSchedulerBackground();
+                isSchedulerActive = true;
+        });
+            
+        }
     }//GEN-LAST:event_create_processActionPerformed
 
     
