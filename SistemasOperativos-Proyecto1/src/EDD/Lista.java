@@ -176,6 +176,7 @@ public class Lista {
         }
     }
 
+/**
     /*
     /**
      
@@ -229,6 +230,7 @@ public class Lista {
             i = j;
             j = tmp;
         }
+        
 
         Lista nodeI = getNodeAt(i);
         Lista nodeJ = getNodeAt(j);

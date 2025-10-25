@@ -25,6 +25,7 @@ public class OS {
     private Cola suspendedReadyQueue = new Cola();
     private Cola suspendedBlockedQueue = new Cola();
     private Lista terminatedProcessList = new Lista();
+    private int currentPlanification = 0;
     private int quantum = 3;
     
     public Cola fillReadyQueue(){
@@ -61,6 +62,42 @@ public class OS {
             return false;
         }
     }
+
+    public void executePriorityPlanification() {
+        scheduler.reorganicePriorityPlanification(readyQueue, priorityList);
+        scheduler.PriorityPlanification(quantum, readyQueue, dispatcher, priorityList, blockedQueue, terminatedProcessList);
+    }
+
+    public void executeSPN() {
+        scheduler.reorganiceSPN(readyQueue);
+        scheduler.SPN(readyQueue, dispatcher, blockedQueue, terminatedProcessList);
+    }
+
+    public void executeFeedback() {
+        scheduler.reorganiceFeedback(readyQueue, priorityList);
+        scheduler.Feedback(quantum, readyQueue, feedbackList, dispatcher, blockedQueue, terminatedProcessList);
+    }
+
+    public void executeFSS() {
+        scheduler.reorganicePriorityPlanification(readyQueue, priorityList);
+        int priorities = scheduler.getPriorities(readyQueue);
+        int i = 0;
+        while (i < priorities) {
+            int priority = ((PCB)((Cola)priorityList.get(i)).get(0)).getPriority();
+            scheduler.recalculateFSS(readyQueue, priority);
+        }
+        scheduler.reorganiceFSS(readyQueue);
+        scheduler.FSS(quantum, readyQueue, dispatcher, blockedQueue, terminatedProcessList);
+    }
+
+    public void executeSRT() {
+        scheduler.reorganiceSRT(readyQueue);
+        scheduler.SRT(readyQueue, dispatcher, blockedQueue, terminatedProcessList);
+    }
+    
+    public void executeRoundRobin(){
+        System.out.println(terminatedProcessList);
+        scheduler.RoundRobin(quantum, readyQueue, dispatcher, blockedQueue, terminatedProcessList);
     
 
     public void executeRoundRobin(){
@@ -238,6 +275,14 @@ public class OS {
         this.terminatedProcessList = terminatedProcessList;
     }
 
+    public int getCurrentPlanification() {
+        return currentPlanification;
+    }
+
+    public void setCurrentPlanification(int currentPlanification) {
+        this.currentPlanification = currentPlanification;
+    }
+        
     /**
      * @return the quantum
      */
@@ -251,7 +296,5 @@ public class OS {
     public void setQuantum(int quantum) {
         this.quantum = quantum;
     }
-    
-    
     
 }
