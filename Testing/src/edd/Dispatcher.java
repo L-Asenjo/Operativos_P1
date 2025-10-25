@@ -50,7 +50,7 @@ public class Dispatcher {
         Proceso procesoAux = null;
         while (i < procesos.count()){
             procesoAux = (Proceso) procesos.get(i);
-            System.out.println("proceso aux running?: " + procesoAux.getPcb().getStatus());
+           // System.out.println("proceso aux running?: " + procesoAux.getPcb().getStatus());
             if (procesoAux.getPcb().getStatus() == "running"){
                 procesoAux = (Proceso) procesos.get(i);
                 break;

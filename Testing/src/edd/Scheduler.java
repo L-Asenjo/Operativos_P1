@@ -601,7 +601,7 @@ public class Scheduler {
             blockedProcess.sleep(blockedProcess.getSatisfyCicles()*1000);
             ((Device)deviceTable.get(i)).getSemaf().release();
             dispatcher.deactivate(blockedProcess);
-            blockedQueue.getQueue().remove(blockedQueue.getQueue().indexOf(blockedProcess));
+            blockedQueue.getQueue().remove(blockedQueue.getQueue().indexOf(blockedProcess.getPcb()));
         } 
         catch(InterruptedException e) {
              Thread.currentThread().interrupt();

@@ -5,6 +5,7 @@
 package interfaz;
 
 import edd.Cola;
+import edd.Lista;
 import edd.PCB;
 import edd.Proceso;
 import edd.OS;
@@ -337,7 +338,9 @@ public class Interface1 extends javax.swing.JFrame {
             operativeSystem.getSuspendedReadyQueue().enqueue(process.getPcb());
         }
         
-        operativeSystem.getProcessList().add(process);
+        Lista aux = operativeSystem.getProcessList();
+        aux.add(process);
+        operativeSystem.setProcessList(aux);
         /*
         System.out.println(operativeSystem.getReadyQueue().getCount());
         System.out.println(operativeSystem.getSuspendedReadyQueue().getCount());*/
@@ -349,21 +352,55 @@ public class Interface1 extends javax.swing.JFrame {
     javax.swing.SwingUtilities.invokeLater(() -> {
         // create test Proceso objects using the same constructor you already used in create_processActionPerformed
         // Adjust arguments to match your Proceso constructor if needed
+        // public Proceso(int id, String name, String bound, int instructions, int ioCicles, int satisfyCicles, int deviceToUse, int priority) {
+        
         Proceso p1 = new Proceso(getId(), "Proceso "+getId(), "I/O Bound", 10, 0, 0, 1,1);   // expected Ready
-        p1.getPcb().setStatus("ready");
         addProcessToSystem(p1);
         
         Proceso p2 = new Proceso(getId(), "Proceso "+getId(), "CPU Bound", 20, 0, 0, 1,1); // expected Blocked
-        p2.getPcb().setStatus("blocked");
         addProcessToSystem(p2);
         
-        Proceso p3 = new Proceso(getId(), "Proceso "+getId(), "I/O Bound", 15, 0, 0, 1,1); // expected Suspended
-        p3.getPcb().setStatus("suspendedReady");
+        Proceso p3 = new Proceso(getId(), "Proceso "+getId(), "I/O Bound", 15, 0, 0, 2,1); // expected Suspended
         addProcessToSystem(p3);
         
-        Proceso p4 = new Proceso(getId(), "Proceso "+getId(), "CPU Bound", 30, 0, 0, 1,1); // expected Suspended Blocked
-        p4.getPcb().setStatus("suspendedBlocked");
+        Proceso p4 = new Proceso(getId(), "Proceso "+getId(), "CPU Bound", 30, 0, 0, 3,1); // expected Suspended Blocked
         addProcessToSystem(p4);
+        
+        Proceso p5 = new Proceso(getId(), "Proceso "+getId(), "CPU Bound", 10, 0, 0, 1,2); // expected Suspended Blocked
+        addProcessToSystem(p5);
+        
+        Proceso p6 = new Proceso(getId(), "Proceso "+getId(), "CPU Bound", 20, 0, 0, 2,2); // expected Suspended Blocked
+        addProcessToSystem(p6);
+        
+        Proceso p7 = new Proceso(getId(), "Proceso "+getId(), "CPU Bound", 30, 0, 0, 3,2); // expected Suspended Blocked
+        addProcessToSystem(p7);
+        
+        Proceso p8 = new Proceso(getId(), "Proceso "+getId(), "CPU Bound", 40, 0, 0, 1,2); // expected Suspended Blocked
+        addProcessToSystem(p8);
+        
+        Proceso p9 = new Proceso(getId(), "Proceso "+getId(), "CPU Bound", 10, 0, 0, 2,3); // expected Suspended Blocked
+        addProcessToSystem(p9);
+        
+        Proceso p10 = new Proceso(getId(), "Proceso "+getId(), "CPU Bound", 20, 0, 0, 3,3); // expected Suspended Blocked
+        addProcessToSystem(p10);
+        
+        Proceso p11 = new Proceso(getId(), "Proceso "+getId(), "CPU Bound", 30, 0, 0, 1,3); // expected Suspended Blocked
+        addProcessToSystem(p11);
+        
+        Proceso p12 = new Proceso(getId(), "Proceso "+getId(), "CPU Bound", 40, 0, 0, 2,3); // expected Suspended Blocked
+        addProcessToSystem(p12);
+        
+        Proceso p13 = new Proceso(getId(), "Proceso "+getId(), "CPU Bound", 10, 0, 0, 3,4); // expected Suspended Blocked
+        addProcessToSystem(p13);
+        
+        Proceso p14 = new Proceso(getId(), "Proceso "+getId(), "CPU Bound", 20, 0, 0, 1,4); // expected Suspended Blocked
+        addProcessToSystem(p14);
+        
+        Proceso p15 = new Proceso(getId(), "Proceso "+getId(), "CPU Bound", 30, 0, 0, 2,4); // expected Suspended Blocked
+        addProcessToSystem(p15);
+        
+        Proceso p16 = new Proceso(getId(), "Proceso "+getId(), "CPU Bound", 40, 0, 0, 3,4); // expected Suspended Blocked
+        addProcessToSystem(p16);
 
     });
 
@@ -389,14 +426,28 @@ public class Interface1 extends javax.swing.JFrame {
         show_terminated.setText(txt);
         show_terminated.revalidate();
         show_terminated.repaint();
+        
+        updateActualProcess();
+        global_clock.setText(terminatedTimer.toString());
     }
-
+    
     /**
-     * Keep this method as the named API you used before; call the UI update.
-     */
-    public void refreshTerminated(){
-        // If you later add notifications, call updateTerminatedArea() from listeners instead.
-        updateTerminatedArea();
+    * Update the terminated-processes text area from the OS terminated list.
+    * This runs on the EDT because javax.swing.Timer events are delivered on the EDT.
+    */
+    private void updateActualProcess() {
+        if (show_actual == null) return; // defensive
+        // printListProcess() returns a String (list of process names). If it returns null, guard it.
+        String txt = "";
+        
+        System.out.println(operativeSystem.getProcessList().count());
+        if (operativeSystem != null && operativeSystem.getProcessList().count() > 0) {
+            txt = operativeSystem.getDispatcher().getActiveProcess(operativeSystem.getProcessList()).getPcb().getName(); //No devuelve el valor correcto
+            if (txt == null) txt = "";
+        }
+        show_actual.setText(txt);
+        show_actual.revalidate();
+        show_actual.repaint();
     }
 
     private void startSchedulerBackground() {
@@ -422,6 +473,7 @@ public class Interface1 extends javax.swing.JFrame {
         refreshBlockedList(operativeSystem.getBlockedQueue());
         refreshSuspendedReadyList(operativeSystem.getSuspendedReadyQueue());
         refreshSuspendedBlockedList(operativeSystem.getSuspendedBlockedQueue());
+        updateActualProcess();
         updateTerminatedArea();
     });
 }
@@ -479,6 +531,9 @@ public class Interface1 extends javax.swing.JFrame {
         jLabel6 = new JLabel();
         jScrollPane1 = new JScrollPane();
         show_terminated = new JTextArea();
+        jLabel11 = new JLabel();
+        jScrollPane6 = new JScrollPane();
+        show_actual = new JTextArea();
         panel2 = new Panel();
         jLabel2 = new JLabel();
         inst_amount = new JSpinner();
@@ -539,23 +594,45 @@ public class Interface1 extends javax.swing.JFrame {
         show_terminated.setRows(5);
         jScrollPane1.setViewportView(show_terminated);
 
+        jLabel11.setFont(new Font("Century Gothic", 1, 12)); // NOI18N
+        jLabel11.setHorizontalAlignment(SwingConstants.CENTER);
+        jLabel11.setText("Proceso actual");
+
+        show_actual.setEditable(false);
+        show_actual.setColumns(20);
+        show_actual.setRows(5);
+        jScrollPane6.setViewportView(show_actual);
+
         GroupLayout panel1Layout = new GroupLayout(panel1);
         panel1.setLayout(panel1Layout);
         panel1Layout.setHorizontalGroup(panel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(GroupLayout.Alignment.TRAILING, panel1Layout.createSequentialGroup()
-                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 306, GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(panel1Layout.createSequentialGroup()
-                .addComponent(jLabel6, GroupLayout.PREFERRED_SIZE, 365, GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 2, Short.MAX_VALUE))
+                .addGroup(panel1Layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel6, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(panel1Layout.createSequentialGroup()
+                        .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 306, GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(GroupLayout.Alignment.LEADING, panel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel11, GroupLayout.PREFERRED_SIZE, 365, GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(GroupLayout.Alignment.LEADING, panel1Layout.createSequentialGroup()
+                        .addGap(36, 36, 36)
+                        .addComponent(jScrollPane6, GroupLayout.PREFERRED_SIZE, 306, GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         panel1Layout.setVerticalGroup(panel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(panel1Layout.createSequentialGroup()
-                .addGap(15, 15, 15)
+                .addGap(16, 16, 16)
+                .addComponent(jLabel11)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane6, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addComponent(jLabel6)
                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 108, GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 58, GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(18, Short.MAX_VALUE))
         );
 
@@ -609,7 +686,7 @@ public class Interface1 extends javax.swing.JFrame {
         panel2Layout.setHorizontalGroup(panel2Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(GroupLayout.Alignment.TRAILING, panel2Layout.createSequentialGroup()
                 .addGap(143, 143, 143)
-                .addComponent(create_process, GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addComponent(create_process, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(130, 130, 130))
             .addComponent(jLabel2, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(panel2Layout.createSequentialGroup()
@@ -757,11 +834,8 @@ public class Interface1 extends javax.swing.JFrame {
         sim_panel.setLayout(sim_panelLayout);
         sim_panelLayout.setHorizontalGroup(sim_panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(GroupLayout.Alignment.TRAILING, sim_panelLayout.createSequentialGroup()
-                .addContainerGap(43, Short.MAX_VALUE)
+                .addContainerGap(38, Short.MAX_VALUE)
                 .addGroup(sim_panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addGroup(sim_panelLayout.createSequentialGroup()
-                        .addComponent(panel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(sim_panelLayout.createSequentialGroup()
                         .addComponent(global_clock, GroupLayout.PREFERRED_SIZE, 82, GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
@@ -769,7 +843,10 @@ public class Interface1 extends javax.swing.JFrame {
                         .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(generate_processes, GroupLayout.PREFERRED_SIZE, 136, GroupLayout.PREFERRED_SIZE))
                     .addComponent(panel3, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(panel2, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(panel2, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(sim_panelLayout.createSequentialGroup()
+                        .addComponent(panel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addGap(112, 112, 112)
                 .addGroup(sim_panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel8, GroupLayout.DEFAULT_SIZE, 793, Short.MAX_VALUE)
@@ -780,7 +857,7 @@ public class Interface1 extends javax.swing.JFrame {
                     .addComponent(jScrollPane5, GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel7, GroupLayout.DEFAULT_SIZE, 793, Short.MAX_VALUE)
                     .addComponent(jScrollPane2))
-                .addContainerGap(46, Short.MAX_VALUE))
+                .addContainerGap(41, Short.MAX_VALUE))
         );
         sim_panelLayout.setVerticalGroup(sim_panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(sim_panelLayout.createSequentialGroup()
@@ -814,7 +891,7 @@ public class Interface1 extends javax.swing.JFrame {
                             .addGroup(sim_panelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(global_clock1, GroupLayout.PREFERRED_SIZE, 54, GroupLayout.PREFERRED_SIZE)
                                 .addComponent(generate_processes, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)))))
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addContainerGap(38, Short.MAX_VALUE))
         );
 
         selection.addTab("Simulación", sim_panel);
@@ -941,7 +1018,7 @@ public class Interface1 extends javax.swing.JFrame {
             .addComponent(selection)
         );
         layout.setVerticalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addComponent(selection, GroupLayout.DEFAULT_SIZE, 755, Short.MAX_VALUE)
+            .addComponent(selection)
         );
 
         pack();
@@ -1036,6 +1113,7 @@ public class Interface1 extends javax.swing.JFrame {
     private JSpinner interrupt_cicle;
     private JSpinner interrupt_handled;
     private JLabel jLabel10;
+    private JLabel jLabel11;
     private JLabel jLabel2;
     private JLabel jLabel3;
     private JLabel jLabel4;
@@ -1049,6 +1127,7 @@ public class Interface1 extends javax.swing.JFrame {
     private JScrollPane jScrollPane3;
     private JScrollPane jScrollPane4;
     private JScrollPane jScrollPane5;
+    private JScrollPane jScrollPane6;
     private Label label10;
     private Label label11;
     private Label label12;
@@ -1069,6 +1148,7 @@ public class Interface1 extends javax.swing.JFrame {
     private JButton save_policy;
     private JTabbedPane selection;
     private JSpinner set_process_priority;
+    private JTextArea show_actual;
     private JTextArea show_terminated;
     private Panel sim_panel;
     // End of variables declaration//GEN-END:variables
