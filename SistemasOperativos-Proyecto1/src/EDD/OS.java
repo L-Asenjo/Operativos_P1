@@ -98,11 +98,8 @@ public class OS {
     public void executeRoundRobin(){
         System.out.println(terminatedProcessList);
         scheduler.RoundRobin(quantum, readyQueue, dispatcher, blockedQueue, terminatedProcessList);
-    
-
-    public void executeRoundRobin(){
-        scheduler.RoundRobin(4, readyQueue, dispatcher);
     }
+    
     /**
      * @return the processList
      */
