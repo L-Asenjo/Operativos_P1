@@ -405,8 +405,7 @@ public class Scheduler {
         }
     }
     
-    
-    
+   
     public int getPriorities(Cola readyQueue){
         Lista priorities = new Lista();
         

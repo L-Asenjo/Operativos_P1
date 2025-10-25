@@ -5,14 +5,10 @@
 package Interfaz;
 
 import EDD.Cola;
-import EDD.Device;
-import EDD.Dispatcher;
-import EDD.Lista;
 import EDD.PCB;
 import EDD.Proceso;
 import EDD.OS;
 import EDD.QueueChangeListener;
-import EDD.Scheduler;
 import java.awt.Choice;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -24,7 +20,6 @@ import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -33,7 +28,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.LayoutStyle;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
@@ -353,12 +347,15 @@ public class Interface1 extends javax.swing.JFrame {
         Proceso p1 = new Proceso(getId(), "Proceso "+getId(), "I/O Bound", 10, 0, 0, 1,1);   // expected Ready
         p1.getPcb().setStatus("ready");
         addProcessToSystem(p1);
+        
         Proceso p2 = new Proceso(getId(), "Proceso "+getId(), "CPU Bound", 20, 0, 0, 1,1); // expected Blocked
         p2.getPcb().setStatus("blocked");
         addProcessToSystem(p2);
+        
         Proceso p3 = new Proceso(getId(), "Proceso "+getId(), "I/O Bound", 15, 0, 0, 1,1); // expected Suspended
         p3.getPcb().setStatus("suspendedReady");
         addProcessToSystem(p3);
+        
         Proceso p4 = new Proceso(getId(), "Proceso "+getId(), "CPU Bound", 30, 0, 0, 1,1); // expected Suspended Blocked
         p4.getPcb().setStatus("suspendedBlocked");
         addProcessToSystem(p4);
