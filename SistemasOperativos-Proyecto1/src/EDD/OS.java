@@ -26,6 +26,7 @@ public class OS {
     private Cola suspendedBlockedQueue = new Cola();
     private Lista terminatedProcessList = new Lista();
     private int currentPlanification = 0;
+    private int quantum = 3;
     
     public Cola fillReadyQueue(){
         //Cola readyQueue = new Cola();
@@ -59,22 +60,6 @@ public class OS {
             process.getPcb().setStatus("suspendedReady");
             System.out.println("no");
             return false;
-        }
-    }
-    
-    public void executePlanification(){
-        if (getCurrentPlanification() == 0){
-            executeRoundRobin();
-        } else if (getCurrentPlanification() == 1) {
-            executePriorityPlanification();
-        } else if (getCurrentPlanification() == 2) {
-            executeSPN();
-        } else if (getCurrentPlanification() == 3) {
-            executeFeedback();
-        } else if (getCurrentPlanification() == 4) {
-            executeFSS();
-        } else if (getCurrentPlanification() == 5) {
-            executeSRT();
         }
     }
 
@@ -282,4 +267,18 @@ public class OS {
         this.currentPlanification = currentPlanification;
     }
         
+    /**
+     * @return the quantum
+     */
+    public int getQuantum() {
+        return quantum;
+    }
+
+    /**
+     * @param quantum the quantum to set
+     */
+    public void setQuantum(int quantum) {
+        this.quantum = quantum;
+    }
+    
 }
