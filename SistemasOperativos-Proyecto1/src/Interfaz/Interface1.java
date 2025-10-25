@@ -47,6 +47,8 @@ public class Interface1 extends javax.swing.JFrame {
 
     private OS operativeSystem = new OS(4000);
     private Timer terminatedTimer;
+    private Timer schedulerTimer;
+    private int planification;
    // private Lista devices = operativeSystem.getDeviceTable();    //---> No creo que sea necesario, se accede directamente a lo que está dentro del sistema operativo
    // private Lista processList = operativeSystem.getProcessList();
     
@@ -68,6 +70,10 @@ public class Interface1 extends javax.swing.JFrame {
         terminatedTimer = new Timer(1000, e -> updateTerminatedArea());
         terminatedTimer.setRepeats(true);
         terminatedTimer.start();
+        
+        schedulerTimer = new Timer(1000, e -> startScheduler());
+        schedulerTimer.setRepeats(true);
+        schedulerTimer.start();
 
         // also do an initial immediate update
         updateTerminatedArea();
@@ -340,9 +346,9 @@ public class Interface1 extends javax.swing.JFrame {
         }
         
         operativeSystem.getProcessList().add(process);
-        
+        /*
         System.out.println(operativeSystem.getReadyQueue().getCount());
-        System.out.println(operativeSystem.getSuspendedReadyQueue().getCount());
+        System.out.println(operativeSystem.getSuspendedReadyQueue().getCount());*/
     }
     
     // FOR TESTING 
@@ -398,6 +404,37 @@ public class Interface1 extends javax.swing.JFrame {
         updateTerminatedArea();
     }
 
+    public void startScheduler(){
+            int selected = planification;
+            System.out.println("planificacion"+selected);
+            if (operativeSystem.getReadyQueue().getCount() > 0){
+                switch(selected){
+                    case 0 -> {
+                        operativeSystem.executeRoundRobin();
+                    }
+                    case 1 -> {
+                        operativeSystem.executePriorityPlanification();
+                    }
+                    case 2 -> {
+                        operativeSystem.executeSPN();
+                    }
+                    case 3 -> {
+                        operativeSystem.executeFeedback();
+                    }
+                    case 4 -> {
+                        operativeSystem.executeFSS();
+                    }
+                    case 5 -> {
+                        operativeSystem.executeSRT();
+                    }
+                }
+            }                      
+            // after scheduler finishes/changes, update UI again on EDT
+            javax.swing.SwingUtilities.invokeLater(() -> {
+                refreshSuspendedBlockedList(operativeSystem.getReadyQueue());
+                // and update other queues/panels if required
+            });
+    }
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -900,28 +937,7 @@ public class Interface1 extends javax.swing.JFrame {
 
     private void save_policyActionPerformed(ActionEvent evt) {//GEN-FIRST:event_save_policyActionPerformed
         // TODO add your handling code here:
-        int selected = planification_choose.getSelectedIndex();
-
-        switch(selected){
-            case 0 -> {
-                // ejecutar round robin
-            }
-            case 1 -> {
-                // ejecutar priority planification
-            }
-            case 2 -> {
-                // ejecutar SPN
-            }
-            case 3 -> {
-                // ejecutar feedback
-            }
-            case 4 -> {
-                // ejecutar FSS
-            }
-            case 5 -> {
-                // ejecutar SRT
-            }
-        }
+        planification = planification_choose.getSelectedIndex();
     }//GEN-LAST:event_save_policyActionPerformed
 
     private void create_processActionPerformed(ActionEvent evt) {//GEN-FIRST:event_create_processActionPerformed

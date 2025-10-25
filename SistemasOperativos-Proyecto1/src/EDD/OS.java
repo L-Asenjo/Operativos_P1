@@ -63,29 +63,41 @@ public class OS {
         }
     }
 
-    private void executePriorityPlanification() {
+    public void executePriorityPlanification() {
         scheduler.reorganicePriorityPlanification(readyQueue, priorityList);
-        scheduler.PriorityPlanification(readyQueue, dispatcher, priorityList);
+        scheduler.PriorityPlanification(quantum, readyQueue, dispatcher, priorityList, blockedQueue, terminatedProcessList);
     }
 
-    private void executeSPN() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public void executeSPN() {
+        scheduler.reorganiceSPN(readyQueue);
+        scheduler.SPN(readyQueue, dispatcher, blockedQueue, terminatedProcessList);
     }
 
-    private void executeFeedback() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public void executeFeedback() {
+        scheduler.reorganiceFeedback(readyQueue, priorityList);
+        scheduler.Feedback(quantum, readyQueue, feedbackList, dispatcher, blockedQueue, terminatedProcessList);
     }
 
-    private void executeFSS() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public void executeFSS() {
+        scheduler.reorganicePriorityPlanification(readyQueue, priorityList);
+        int priorities = scheduler.getPriorities(readyQueue);
+        int i = 0;
+        while (i < priorities) {
+            int priority = ((PCB)((Cola)priorityList.get(i)).get(0)).getPriority();
+            scheduler.recalculateFSS(readyQueue, priority);
+        }
+        scheduler.reorganiceFSS(readyQueue);
+        scheduler.FSS(quantum, readyQueue, dispatcher, blockedQueue, terminatedProcessList);
     }
 
-    private void executeSRT() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public void executeSRT() {
+        scheduler.reorganiceSRT(readyQueue);
+        scheduler.SRT(readyQueue, dispatcher, blockedQueue, terminatedProcessList);
     }
     
     public void executeRoundRobin(){
-        scheduler.RoundRobin(4, readyQueue, dispatcher, blockedQueue);
+        System.out.println(terminatedProcessList);
+        scheduler.RoundRobin(quantum, readyQueue, dispatcher, blockedQueue, terminatedProcessList);
     }
     /**
      * @return the processList

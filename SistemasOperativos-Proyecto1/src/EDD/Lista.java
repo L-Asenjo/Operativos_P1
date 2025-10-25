@@ -176,8 +176,7 @@ public class Lista {
         }
     }
 
-    /*
-    /**
+/**
      
     Función para obtener el índice de un elemento dentro de la lista.*
     @param value Objeto a encontrar.
@@ -185,39 +184,18 @@ public class Lista {
     public int indexOf(Object value) {
         Object aux = this.value.getValue();
 
-            if ((value instanceof PCB)) {
-                if(this.value != null && ((PCB)aux).getId() == ((PCB)value).getId()){
-                    return this.value.getIndex();
+            if (this.value != null && (value instanceof PCB) && ((PCB)aux).getId() == ((PCB)value).getId()) {
+                return this.value.getIndex();
+            } else if (this.value != null && (value instanceof Device) && ((Device)aux).getId() == ((Device)value).getId()){
+                return this.value.getIndex();
+            } else if (this.value != null && (value instanceof Proceso) && ((Proceso)aux).getPcb().getId() == ((Proceso)value).getPcb().getId()) {
+                return this.value.getIndex();
+            }else {
+                if (this.next != null) {
+                    return this.next.indexOf(value);
                 } else {
-                    if (this.next != null) {
-                        return this.next.indexOf(value);
-                    } else {
-                        return -1;
-                    }
+                    return -1;
                 }
-                   
-            } else if ((value instanceof Device)){
-                if(this.value != null && ((Device)aux).getId() == ((Device)value).getId()){
-                    return this.value.getIndex();
-                } else {
-                    if (this.next != null) {
-                        return this.next.indexOf(value);
-                    } else {
-                        return -1;
-                    }
-                }
-            } else if (value instanceof Proceso){
-                if(this.value != null && ((Proceso)aux).getPcb().getId() == ((Proceso)value).getPcb().getId()){
-                    return this.value.getIndex();
-                } else {
-                    if (this.next != null) {
-                        return this.next.indexOf(value);
-                    } else {
-                        return -1;
-                    }
-                }
-            } else {
-                return -1;
             }
     }
     
