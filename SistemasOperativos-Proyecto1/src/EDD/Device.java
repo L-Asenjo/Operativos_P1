@@ -20,10 +20,6 @@ public class Device {
         this.semaf = new Semaphore(1);
     }
 
-    public Device() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
     public Semaphore getSemaf() {
         return semaf;
     }

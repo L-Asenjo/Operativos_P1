@@ -4,11 +4,7 @@
  */
 package main;
 
-import Interfaz.Interface1;
-import EDD.Cola;
-import EDD.Lista;
-import EDD.Proceso;
-import EDD.PCB;
+import Interfaz.Interface;
 
 /**
  *
@@ -20,16 +16,10 @@ public class main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        
-        Interface1 menu = new Interface1();
+        Interface menu = new Interface();
         menu.setVisible(true);
-        //menu.runQuickAddDemo();
-        
-        //exampleListaSwap();
-        //exampleColaSwap();
+
         // TODO code application logic here
     }
-    
-    // Example A: use Lista.swap directly with Proceso objects
     
 }

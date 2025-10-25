@@ -21,12 +21,12 @@ public class Lista {
     /**
      * Procedimiento para agregar un objeto en la lista
      *
-     * @param value1 Proceso
+     * @param j Elemento a agregar a la lista.
      */
-    public void add(Object value1) {
-        if (value1 != null) {
+    public void add(Object j) {
+        if (j != null) {
             ElementoLista newValue = new ElementoLista();
-            newValue.setValue(value1);
+            newValue.setValue(j);
             newValue.setIndex(count);
 
             if (this.value == null) {
@@ -43,7 +43,6 @@ public class Lista {
             count++;
         }
     }
-
 
     /**
      * Función para obtener un elemento según su índice dentro de la lista
@@ -112,15 +111,12 @@ public class Lista {
     public int count() {
         if (this.value == null) {
             return 0;
-        } 
-        
-        if (this.next == null) {
-            return 1;
         } else if (this.next == null){
-        } else {
+            return 1;
+        }
+        else {
             return 1 + this.next.count();
-        } 
-        return 0;
+        }
     }
 
     /**
@@ -155,9 +151,7 @@ public class Lista {
         }
         return txt;
     }
-    
-    
-    
+
     /**
      * Función para verificar si un objeto se encuentra dentro de la lista.
      *
@@ -176,7 +170,6 @@ public class Lista {
         }
     }
 
-    /*
     /**
      
     Función para obtener el índice de un elemento dentro de la lista.*
@@ -219,69 +212,7 @@ public class Lista {
             } else {
                 return -1;
             }
-    }
-    
-    private Lista getNodeAt(int index) {
-        if (index < 0 || index >= count()) return null;
-        Lista current = this;
-        int i = 0;
-        while (i < index) {
-            current = current.next;
-            i++;
-        }
-        return current;
-    }
-
-    /**
-     * Intercambia los valores almacenados en los nodos de índice i y j.
-     * Actualiza los índices de ElementoLista para mantener consistencia.
-     *
-     * @param i índice del primer elemento
-     * @param j índice del segundo elemento
-     */
-    public void swap(int i, int j) {
-        if (i == j) return; // nada que hacer
-        if (i < 0 || j < 0) return;
-        if (i >= count() || j >= count()) return;
-
-        // asegurar que i < j para simplificar
-        if (i > j) {
-            int tmp = i;
-            i = j;
-            j = tmp;
         }
         
 
-        Lista nodeI = getNodeAt(i);
-        Lista nodeJ = getNodeAt(j);
-
-        if (nodeI == null || nodeJ == null) return;
-
-        // intercambio simple de los valores
-        ElementoLista tempValue = nodeI.value;
-        nodeI.value = nodeJ.value;
-        nodeJ.value = tempValue;
-
-        // recomputar índices (mantener igual comportamiento que remove)
-        recomputeIndices();
-    }
-
-    /**
-     * Recalcula los índices (ElementoLista.index) a partir del inicio de la lista.
-     * Llamar esto después de operaciones que cambien el orden o contenido.
-     */
-    private void recomputeIndices() {
-        Lista temp = this;
-        int idx = 0;
-        while (temp != null) {
-            if (temp.value != null) {
-                temp.value.setIndex(idx);
-                idx++;
-            }
-            temp = temp.next;
-        }
-        // update count to match number of non-null values (defensive)
-        this.count = idx;
-    }
-    
 }
