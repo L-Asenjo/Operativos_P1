@@ -599,7 +599,7 @@
                       <Component id="panel4" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
                       <Component id="panel5" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="651" max="32767" attributes="0"/>
+                      <EmptySpace pref="738" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -611,7 +611,7 @@
                           <Component id="panel5" min="-2" max="-2" attributes="0"/>
                           <Component id="panel4" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="467" max="32767" attributes="0"/>
+                      <EmptySpace pref="502" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -715,20 +715,9 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jLabel10" alignment="1" max="32767" attributes="0"/>
-                      <Group type="102" alignment="1" attributes="0">
-                          <EmptySpace pref="44" max="32767" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="1" attributes="0">
-                                  <Component id="cicle_duration" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace min="-2" pref="38" max="-2" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="1" attributes="0">
-                                  <Component id="label13" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace min="-2" pref="115" max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
-                      </Group>
+                      <Component id="jLabel10" alignment="1" pref="214" max="32767" attributes="0"/>
+                      <Component id="cicle_duration" alignment="1" max="32767" attributes="0"/>
+                      <Component id="label13" alignment="0" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
                 <DimensionLayout dim="1">
@@ -736,9 +725,9 @@
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
                           <Component id="jLabel10" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
-                          <Component id="cicle_duration" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
+                          <Component id="cicle_duration" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
                           <Component id="label13" min="-2" max="-2" attributes="0"/>
                           <EmptySpace pref="27" max="32767" attributes="0"/>
                       </Group>
@@ -764,11 +753,12 @@
                     <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="33" green="33" red="33" type="rgb"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="segundos"/>
+                    <Property name="text" type="java.lang.String" value="1"/>
                   </Properties>
                 </Component>
                 <Component class="java.awt.Label" name="label13">
                   <Properties>
+                    <Property name="alignment" type="int" value="1"/>
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                       <Font name="Segoe UI" size="12" style="0"/>
                     </Property>

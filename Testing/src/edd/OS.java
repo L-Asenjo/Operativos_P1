@@ -27,6 +27,8 @@ public class OS {
     private Lista terminatedProcessList = new Lista();
     private int currentPlanification = 0;
     private int quantum = 3;
+
+    
     
     public Cola fillReadyQueue(){
         //Cola readyQueue = new Cola();
@@ -42,7 +44,16 @@ public class OS {
     }
 
     public OS(int memorySpace) {
+        Device first = new Device(1);
+        Device second = new Device(2);
+        Device third = new Device(3);
+        
+        deviceTable.add(first);
+        deviceTable.add(second);
+        deviceTable.add(third);
+        
         this.scheduler = new Scheduler(processList, memorySpace, deviceTable);
+        
     }
     
     

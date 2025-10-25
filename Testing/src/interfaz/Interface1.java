@@ -43,6 +43,7 @@ public class Interface1 extends javax.swing.JFrame {
     private Timer terminatedTimer;
     private int planification;
     private boolean isSchedulerActive = false;
+    private Thread schedulerThread;
    // private Lista devices = operativeSystem.getDeviceTable();    //---> No creo que sea necesario, se accede directamente a lo que está dentro del sistema operativo
    // private Lista processList = operativeSystem.getProcessList();
     
@@ -67,6 +68,7 @@ public class Interface1 extends javax.swing.JFrame {
         
         // also do an initial immediate update
         updateTerminatedArea();
+        startSchedulerBackground();
     }
 
     private void setupScrollContainers() {
@@ -398,16 +400,20 @@ public class Interface1 extends javax.swing.JFrame {
     }
 
     private void startSchedulerBackground() {
-    int selected = planification; // read atomic/volatile if planification can change concurrently
-    if (operativeSystem.getReadyQueue().getCount() > 0) {
-        switch (selected) {
-            case 0 -> operativeSystem.executeRoundRobin();
-            case 1 -> operativeSystem.executePriorityPlanification();
-            case 2 -> operativeSystem.executeSPN();
-            case 3 -> operativeSystem.executeFeedback();
-            case 4 -> operativeSystem.executeFSS();
-            case 5 -> operativeSystem.executeSRT();
-        }
+        int selected = planification; // read atomic/volatile if planification can change concurrently
+        System.out.println(selected);
+        if (operativeSystem.getReadyQueue().getCount() > 0) {
+            switch (selected) {
+                case 0 -> {
+                    operativeSystem.executeRoundRobin();
+                    //System.out.println("xddddddddddd");
+                }
+                case 1 -> operativeSystem.executePriorityPlanification();
+                case 2 -> operativeSystem.executeSPN();
+                case 3 -> operativeSystem.executeFeedback();
+                case 4 -> operativeSystem.executeFSS();
+                case 5 -> operativeSystem.executeSRT();
+            }
     }
     // only after scheduler finishes, post minimal UI updates to EDT:
     javax.swing.SwingUtilities.invokeLater(() -> {
@@ -419,6 +425,44 @@ public class Interface1 extends javax.swing.JFrame {
         updateTerminatedArea();
     });
 }
+    private void startSchedulerThread() {
+        if (schedulerThread != null && schedulerThread.isAlive()) return;
+        schedulerThread = new Thread(() -> {
+            // run until interrupted (dispose() will interrupt)
+            System.out.println("ssss");
+            while (!Thread.currentThread().isInterrupted()) {
+                try {
+                    startSchedulerBackground();
+                } catch (Throwable t) {
+                    t.printStackTrace();
+                }
+                // sleep between scheduler ticks, allow interruption to break early
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException ex) {
+                    // preserve interrupt status and exit loop
+                    Thread.currentThread().interrupt();
+                }
+            }
+        }, "SchedulerThread");
+        schedulerThread.setDaemon(true);
+        schedulerThread.start();
+        isSchedulerActive = true;
+    }
+
+    @Override
+    public void dispose() {
+        // stop scheduler thread
+        if (schedulerThread != null && schedulerThread.isAlive()) {
+            schedulerThread.interrupt();
+            try {
+                schedulerThread.join(500);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+        super.dispose();
+    }
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -834,8 +878,9 @@ public class Interface1 extends javax.swing.JFrame {
         cicle_duration.setAlignment(Label.CENTER);
         cicle_duration.setFont(new Font("Segoe UI", 1, 48)); // NOI18N
         cicle_duration.setForeground(new Color(51, 51, 51));
-        cicle_duration.setText("segundos");
+        cicle_duration.setText("1");
 
+        label13.setAlignment(Label.CENTER);
         label13.setFont(new Font("Segoe UI", 0, 12)); // NOI18N
         label13.setForeground(new Color(51, 51, 51));
         label13.setText("segundos");
@@ -843,24 +888,17 @@ public class Interface1 extends javax.swing.JFrame {
         GroupLayout panel5Layout = new GroupLayout(panel5);
         panel5.setLayout(panel5Layout);
         panel5Layout.setHorizontalGroup(panel5Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel10, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(GroupLayout.Alignment.TRAILING, panel5Layout.createSequentialGroup()
-                .addContainerGap(44, Short.MAX_VALUE)
-                .addGroup(panel5Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addGroup(GroupLayout.Alignment.TRAILING, panel5Layout.createSequentialGroup()
-                        .addComponent(cicle_duration, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addGap(38, 38, 38))
-                    .addGroup(GroupLayout.Alignment.TRAILING, panel5Layout.createSequentialGroup()
-                        .addComponent(label13, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addGap(115, 115, 115))))
+            .addComponent(jLabel10, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 214, Short.MAX_VALUE)
+            .addComponent(cicle_duration, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(label13, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         panel5Layout.setVerticalGroup(panel5Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(panel5Layout.createSequentialGroup()
                 .addGap(16, 16, 16)
                 .addComponent(jLabel10)
-                .addGap(21, 21, 21)
-                .addComponent(cicle_duration, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(cicle_duration, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addGap(21, 21, 21)
                 .addComponent(label13, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(27, Short.MAX_VALUE))
         );
@@ -873,7 +911,7 @@ public class Interface1 extends javax.swing.JFrame {
                 .addComponent(panel4, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addGap(32, 32, 32)
                 .addComponent(panel5, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(651, Short.MAX_VALUE))
+                .addContainerGap(738, Short.MAX_VALUE))
         );
         config_panelLayout.setVerticalGroup(config_panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(config_panelLayout.createSequentialGroup()
@@ -881,7 +919,7 @@ public class Interface1 extends javax.swing.JFrame {
                 .addGroup(config_panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                     .addComponent(panel5, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addComponent(panel4, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(467, Short.MAX_VALUE))
+                .addContainerGap(502, Short.MAX_VALUE))
         );
 
         selection.addTab("Configuración", config_panel);
@@ -922,6 +960,7 @@ public class Interface1 extends javax.swing.JFrame {
     private void save_policyActionPerformed(ActionEvent evt) {//GEN-FIRST:event_save_policyActionPerformed
         // TODO add your handling code here:
         planification = planification_choose.getSelectedIndex();
+        startSchedulerBackground();
     }//GEN-LAST:event_save_policyActionPerformed
 
     private void create_processActionPerformed(ActionEvent evt) {//GEN-FIRST:event_create_processActionPerformed

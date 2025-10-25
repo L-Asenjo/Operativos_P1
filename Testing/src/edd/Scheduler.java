@@ -43,6 +43,9 @@ public class Scheduler {
             Proceso toRun = dispatcher.getActiveProcess(getProcessList());
             
             while(toRun.getPcb().getStatus() == "running") {
+                // honor interruption from the scheduler thread (UI changed planification)
+                if (Thread.currentThread().isInterrupted()) return;
+
                 System.out.println("is running");
                 if (toRun.getTimeSpent() >= quantum || toRun.getProcessingTime() <= toRun.getTotalTimeSpent()){
                     dispatcher.deactivate(toRun);   // running --> ready
@@ -56,16 +59,18 @@ public class Scheduler {
                         accessDevice(toRun, dispatcher, blockedQueue);
                     } 
                     catch(InterruptedException e) {
-                         // this part is executed when an exception (in this example InterruptedException) occurs
-                         System.out.println("en catch" + e);
+                         // honor interruption — propagate by setting the interrupted flag and return
+                         Thread.currentThread().interrupt();
+                         return;
                     }                
                 }                
                 try {
                     Thread.sleep(1000);
                 } 
                 catch(InterruptedException e) {
-                     // this part is executed when an exception (in this example InterruptedException) occurs
-                     System.out.println("en catch" + e);
+                     // honor interruption — set flag and return
+                     Thread.currentThread().interrupt();
+                     return;
                 }
             }
             if (toRun.getProcessingTime() <= toRun.getTotalTimeSpent()) {
@@ -92,6 +97,8 @@ public class Scheduler {
             Proceso toRun = dispatcher.getActiveProcess(processList);
             
             while(toRun.getPcb().getStatus() == "running"){
+                if (Thread.currentThread().isInterrupted()) return;
+
                 if (toRun.getProcessingTime() == toRun.getTimeSpent()){
                     dispatcher.deactivate(toRun);
                     readyQueue.dequeue();
@@ -104,16 +111,16 @@ public class Scheduler {
                         accessDevice(toRun, dispatcher, blockedQueue);
                     } 
                     catch(InterruptedException e) {
-                         // this part is executed when an exception (in this example InterruptedException) occurs
-                         System.out.println("en catch" + e);
+                         Thread.currentThread().interrupt();
+                         return;
                     }
                 }
                 try {
                     Thread.sleep(1000);
                 } 
                 catch(InterruptedException e) {
-                     // this part is executed when an exception (in this example InterruptedException) occurs
-                     System.out.println("en catch" + e);
+                     Thread.currentThread().interrupt();
+                     return;
                 }
                 }
             if (toRun.getProcessingTime() <= toRun.getTotalTimeSpent()) {
@@ -128,6 +135,9 @@ public class Scheduler {
     
     public void PriorityPlanification(int quantum, Cola readyQueue, Dispatcher dispatcher, Lista priorityList, Cola blockedQueue, Lista terminatedProcessList){
         for (int i = 0; i < priorityList.count(); i++){
+            // check interruption on top of loops
+            if (Thread.currentThread().isInterrupted()) return;
+
             Cola act = (Cola)priorityList.get(i);
             
             PCB pcbOfActiveProcess = (PCB) act.dequeue();
@@ -142,6 +152,8 @@ public class Scheduler {
                 //while running
                 Proceso toRun = dispatcher.getActiveProcess(processList);
                 while(toRun.getPcb().getStatus() == "running") {
+                    if (Thread.currentThread().isInterrupted()) return;
+
                     if (toRun.getTimeSpent() >= quantum || toRun.getProcessingTime() <= toRun.getTotalTimeSpent()){
                         dispatcher.deactivate(toRun);   // running --> ready                    
                     }
@@ -153,8 +165,8 @@ public class Scheduler {
                             accessDevice(toRun, dispatcher, blockedQueue);
                         } 
                         catch(InterruptedException e) {
-                             // this part is executed when an exception (in this example InterruptedException) occurs
-                             System.out.println("en catch" + e);
+                             Thread.currentThread().interrupt();
+                             return;
                         }                
                     }                
                 
@@ -162,8 +174,8 @@ public class Scheduler {
                         Thread.sleep(1000);
                     } 
                     catch(InterruptedException e) {
-                         // this part is executed when an exception (in this example InterruptedException) occurs
-                         System.out.println("en catch" + e);
+                         Thread.currentThread().interrupt();
+                         return;
                     }
                 }
                 if (toRun.getProcessingTime() <= toRun.getTotalTimeSpent()) {
@@ -182,8 +194,11 @@ public class Scheduler {
         System.out.println("en feedback");
         int quantum = setQuantum;
         int i = 0;
+        if (Thread.currentThread().isInterrupted()) return;
         PCB processToActivate = null;
         while (i < readyQueueList.count()){
+            if (Thread.currentThread().isInterrupted()) return;
+
             if (((Cola)readyQueueList.get(i)).getCount() > 0){
                 System.out.println("activando");
                 processToActivate = (PCB)(((Cola)readyQueueList.get(i)).dequeue());
@@ -197,29 +212,16 @@ public class Scheduler {
         }
         
         Proceso toRun = dispatcher.getActiveProcess(processList);
-        /*if (toRun.getBound() == "IO" && toRun.getInterruptAt() == toRun.getPcb().getPc()-1){
-            toRun.getPcb().setStatus("blocked");
-        } else {
-            toRun.getPcb().setStatus("ready");
-        }*/
-        System.out.println(toRun.getPcb().getTimesIn());        
+        if (toRun == null) return;
+        if (Thread.currentThread().isInterrupted()) return;
+
         toRun.getPcb().setTimesIn(toRun.getPcb().getTimesIn()+1);
-        System.out.println(toRun.getPcb().getStatus());
-        System.out.println(toRun.getBound());
-        System.out.println(toRun.getPcb().getId());
         while (toRun.getPcb().getStatus() == "running"){
-            /*System.out.println("is running");
-            System.out.println("time spent:" + toRun.getTimeSpent());
-            System.out.println("quantum" + quantum);*/
-            System.out.println(toRun.getProcessingTime() <= toRun.getTotalTimeSpent());
-            System.out.println(toRun.getTimeSpent() == quantum);
+            if (Thread.currentThread().isInterrupted()) return;
+
             if (toRun.getTimeSpent() >= quantum || toRun.getProcessingTime() <= toRun.getTotalTimeSpent()){
-                System.out.println("desactivando");
                 dispatcher.deactivate(toRun);   // running --> ready
             }
-            System.out.println(toRun.getPcb().getPc()-1);
-            System.out.println(toRun.getInterruptAt());
-            System.out.println(toRun.getPcb().getPc()-1 == toRun.getInterruptAt());
             if (toRun.getBound() == "I/O Bound" && toRun.getPcb().getPc()-1 == toRun.getInterruptAt()){
                 toRun.getPcb().setStatus("blocked");
                 System.out.println("bloqueado");
@@ -230,8 +232,8 @@ public class Scheduler {
                     accessDevice(toRun, dispatcher, blockedQueue);
                 } 
                 catch(InterruptedException e) {
-                     // this part is executed when an exception (in this example InterruptedException) occurs
-                     System.out.println("en catch" + e);
+                     Thread.currentThread().interrupt();
+                     return;
                 }
                 
             }
@@ -239,13 +241,11 @@ public class Scheduler {
                 Thread.sleep(1000);
             } 
             catch(InterruptedException e) {
-                 // this part is executed when an exception (in this example InterruptedException) occurs
-                 System.out.println("en catch" + e);
+                 Thread.currentThread().interrupt();
+                 return;
             }
             
         }
-        System.out.println("ptime:" + toRun.getProcessingTime());
-        System.out.println("total time spent:" + toRun.getTotalTimeSpent());
         if (toRun.getProcessingTime() <= toRun.getTotalTimeSpent()) {
             toRun.getPcb().setStatus("terminated");
             terminatedProcessList.add(toRun);
@@ -270,8 +270,11 @@ public class Scheduler {
             dispatcher.activate(((PCB)(processToActivate)), getProcessList());
             
             Proceso toRun = dispatcher.getActiveProcess(getProcessList());
-            
+            if (toRun == null) return;
+
             while (toRun.getPcb().getStatus() == "running"){
+                if (Thread.currentThread().isInterrupted()) return;
+
                 if (toRun.getTimeSpent() >= quantum || toRun.getProcessingTime() <= toRun.getTotalTimeSpent()){
                     dispatcher.deactivate(toRun);   // running --> ready
                 }
@@ -283,16 +286,16 @@ public class Scheduler {
                         accessDevice(toRun, dispatcher, blockedQueue);
                     } 
                     catch(InterruptedException e) {
-                         // this part is executed when an exception (in this example InterruptedException) occurs
-                         System.out.println("en catch" + e);
+                         Thread.currentThread().interrupt();
+                         return;
                     }                
                 }                
                 try {
                     Thread.sleep(1000);
                 } 
                 catch(InterruptedException e) {
-                     // this part is executed when an exception (in this example InterruptedException) occurs
-                     System.out.println("en catch" + e);
+                     Thread.currentThread().interrupt();
+                     return;
                 }
             }
             if (toRun.getProcessingTime() <= toRun.getTotalTimeSpent()) {
@@ -310,8 +313,11 @@ public class Scheduler {
             dispatcher.activate(((PCB)(processToActivate)), getProcessList());
             
             Proceso toRun = dispatcher.getActiveProcess(getProcessList());
-            
+            if (toRun == null) return;
+
             while (toRun.getPcb().getStatus() == "running"){
+                if (Thread.currentThread().isInterrupted()) return;
+
                 if (toRun.getProcessingTime() <= toRun.getTimeSpent()){
                     dispatcher.deactivate(toRun);
                     readyQueue.dequeue();
@@ -324,16 +330,16 @@ public class Scheduler {
                         accessDevice(toRun, dispatcher, blockedQueue);
                     } 
                     catch(InterruptedException e) {
-                         // this part is executed when an exception (in this example InterruptedException) occurs
-                         System.out.println("en catch" + e);
+                         Thread.currentThread().interrupt();
+                         return;
                     }
                 }
                 try {
                     Thread.sleep(1000);
                 } 
                 catch(InterruptedException e) {
-                     // this part is executed when an exception (in this example InterruptedException) occurs
-                     System.out.println("en catch" + e);
+                     Thread.currentThread().interrupt();
+                     return;
                 }
             }
             if (toRun.getProcessingTime() <= toRun.getTotalTimeSpent()) {
@@ -578,13 +584,14 @@ public class Scheduler {
     public void accessDevice(Proceso blockedProcess, Dispatcher dispatcher, Cola blockedQueue){
         int i = 0;
         while (i < deviceTable.count()){
+            if (Thread.currentThread().isInterrupted()) return;
             if (blockedProcess.getDeviceToUse() == ((Device)deviceTable.get(i)).getId()){
                 try {
                     System.out.println("accediendo al device");
                     ((Device)deviceTable.get(i)).getSemaf().acquire();
                 } catch(InterruptedException e) {
-                    // this part is executed when an exception (in this example InterruptedException) occurs
-                    System.out.println("en catch" + e);
+                    Thread.currentThread().interrupt();
+                    return;
                 }
                 break;
             }
@@ -597,8 +604,8 @@ public class Scheduler {
             blockedQueue.getQueue().remove(blockedQueue.getQueue().indexOf(blockedProcess));
         } 
         catch(InterruptedException e) {
-             // this part is executed when an exception (in this example InterruptedException) occurs
-             System.out.println("en catch" + e);
+             Thread.currentThread().interrupt();
+             return;
         }
     }
     
